@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+https://kiran-33k.github.io/ExpenseWise/<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -1251,7 +1251,24 @@
         </div>
 
         <!-- Bottom Navigation -->
-       
+        <div class="bottom-nav">
+            <div class="nav-item active" onclick="navigateTo('home')">
+                <span class="material-symbols-rounded" style="font-size: 24px;">home</span>
+                <span>Home</span>
+            </div>
+            <div class="nav-item" onclick="navigateTo('transactions')">
+                <span class="material-symbols-rounded" style="font-size: 24px;">receipt_long</span>
+                <span>Transactions</span>
+            </div>
+            <div class="nav-item" onclick="navigateTo('reports')">
+                <span class="material-symbols-rounded" style="font-size: 24px;">bar_chart</span>
+                <span>Reports</span>
+            </div>
+            <div class="nav-item" onclick="navigateTo('account')">
+                <span class="material-symbols-rounded" style="font-size: 24px;">settings</span>
+                <span>Settings</span>
+            </div>
+        </div>
 
         <!-- FAB (Only on Home) -->
         <div class="fab" id="fabButton" onclick="openTransactionModal()">
@@ -2803,4 +2820,3 @@ document.head.appendChild(responsiveStyles);
     </script>
 </body>
 </html>
-
