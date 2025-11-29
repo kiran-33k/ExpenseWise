@@ -1,0 +1,2722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ExpenseWise</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            font-family: 'Bricolage Grotesque', -apple-system, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            overflow-x: hidden;
+            background: var(--bg);
+        }
+
+        .app {
+            max-width: 480px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: var(--bg);
+            position: relative;
+        }
+
+        /* Stylish Modern Theme */
+        :root {
+            --bg: #fafbfc;
+            --surface: #ffffff;
+            --text: #0f1419;
+            --text-secondary: #536471;
+            --text-tertiary: #8b98a5;
+            --accent: #5b7dff;
+            --success: #00ba88;
+            --error: #ff4757;
+            --divider: #eff3f4;
+            --shadow: rgba(101, 119, 134, 0.08);
+            --hover: rgba(15, 20, 25, 0.03);
+        }
+
+        .dark {
+            --bg: #000000;
+            --surface: #16181c;
+            --text: #e7e9ea;
+            --text-secondary: #71767b;
+            --text-tertiary: #565a5f;
+            --accent: #7392ff;
+            --success: #00d9a5;
+            --error: #ff6b7a;
+            --divider: #2f3336;
+            --shadow: rgba(255, 255, 255, 0.03);
+            --hover: rgba(255, 255, 255, 0.03);
+        }
+
+        /* Elegant Transitions */
+        * {
+            transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                        color 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+                        transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Smooth Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(16px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            33% { transform: translateX(-8px); }
+            66% { transform: translateX(8px); }
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .animate-in {
+            animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .slide-up {
+            animation: slideUp 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .pop-in {
+            animation: popIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Lock Screen */
+        .lock-screen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 32px;
+            background: var(--bg);
+        }
+
+        .lock-content {
+            width: 100%;
+            max-width: 340px;
+            text-align: center;
+        }
+
+        .lock-icon-wrap {
+            width: 72px;
+            height: 72px;
+            border-radius: 20px;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 36px;
+            box-shadow: 0 8px 24px rgba(91, 125, 255, 0.24);
+        }
+
+        .pin-dots {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 44px;
+        }
+
+        .pin-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--divider);
+            transition: all 0.2s;
+        }
+
+        .pin-dot.filled {
+            background: var(--accent);
+            transform: scale(1.3);
+        }
+
+        .numpad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            max-width: 280px;
+            margin: 0 auto;
+        }
+
+        .numpad-key {
+            aspect-ratio: 1;
+            border-radius: 12px;
+            background: var(--surface);
+            border: 2px solid var(--divider);
+            color: var(--text);
+            font-size: 24px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .numpad-key:hover {
+            background: var(--hover);
+            border-color: var(--accent);
+        }
+
+        .numpad-key:active {
+            transform: scale(0.92);
+            background: var(--hover);
+        }
+
+        .numpad-key.primary {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .numpad-key.primary:hover {
+            background: #4a6eef;
+        }
+
+        /* Pages */
+        .page {
+            display: none;
+            min-height: 100vh;
+            padding: 0 20px 140px;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 20px;
+        }
+
+        .brand {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text);
+            letter-spacing: -0.5px;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--surface);
+            border: 1px solid var(--divider);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text);
+        }
+
+        .icon-btn:active {
+            transform: scale(0.9);
+            background: var(--hover);
+        }
+
+        /* Search Bar */
+        .search-wrapper {
+            margin-bottom: 16px;
+        }
+
+        .search-bar {
+            position: relative;
+            margin-bottom: 12px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 16px 14px 44px;
+            background: var(--surface);
+            border: 1px solid var(--divider);
+            border-radius: 14px;
+            color: var(--text);
+            font-size: 15px;
+            font-weight: 500;
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            pointer-events: none;
+        }
+
+        .filter-icon {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: var(--surface);
+            border: 1px solid var(--divider);
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .filter-icon:active {
+            transform: scale(0.96);
+            background: var(--hover);
+        }
+
+        .filter-icon.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        /* Compact Dashboard Container */
+        .dashboard-container {
+            background: var(--surface);
+            border-radius: 24px;
+            padding: 20px 18px;
+            border: 1px solid var(--divider);
+            box-shadow: 0 4px 20px var(--shadow);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .balance-section {
+            text-align: center;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--divider);
+            margin-bottom: 16px;
+        }
+
+        .balance-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 8px;
+        }
+
+        .balance-value {
+            font-size: 36px;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--accent), #9b6dff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1.5px;
+            line-height: 1;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .stat-box {
+            background: var(--bg);
+            border-radius: 14px;
+            padding: 14px 12px;
+            text-align: center;
+        }
+
+        .stat-icon-wrap {
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 8px;
+        }
+
+        .stat-icon-wrap.income {
+            background: rgba(0, 186, 136, 0.12);
+            color: var(--success);
+        }
+
+        .stat-icon-wrap.expense {
+            background: rgba(255, 71, 87, 0.12);
+            color: var(--error);
+        }
+
+        .stat-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .stat-number {
+            font-size: 18px;
+            font-weight: 900;
+            color: var(--text);
+            letter-spacing: -0.5px;
+        }
+
+        /* Bar Chart */
+        .bar-chart {
+            margin-top: 24px;
+            padding: 20px;
+            background: var(--bg);
+            border-radius: 16px;
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 200px;
+            gap: 20px;
+            margin-bottom: 16px;
+        }
+
+        .bar-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bar {
+            width: 100%;
+            max-width: 80px;
+            border-radius: 8px 8px 0 0;
+            position: relative;
+            transition: height 0.5s ease;
+        }
+
+        .bar.income {
+            background: linear-gradient(180deg, var(--success), rgba(0, 186, 136, 0.6));
+        }
+
+        .bar.expense {
+            background: linear-gradient(180deg, var(--error), rgba(255, 71, 87, 0.6));
+        }
+
+        .bar-value {
+            position: absolute;
+            top: -28px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--text);
+            white-space: nowrap;
+        }
+
+        .bar-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Card */
+        .card {
+            background: var(--surface);
+            border-radius: 20px;
+            padding: 20px;
+            border: 1px solid var(--divider);
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px var(--shadow);
+        }
+
+        /* Swipeable Transaction Item */
+        .transaction-wrapper {
+            position: relative;
+            margin-bottom: 10px;
+            overflow: visible;
+        }
+
+        .transaction-item {
+            background: var(--surface);
+            border-radius: 14px;
+            padding: 12px 14px;
+            border: 1px solid var(--divider);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+            touch-action: pan-y;
+            cursor: grab;
+        }
+
+        .transaction-item:active {
+            cursor: grabbing;
+        }
+
+        .transaction-item.swiping {
+            transition: none;
+        }
+
+        .delete-bg {
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: var(--error);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 20px;
+            color: white;
+            font-weight: 700;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .transaction-wrapper.deleting .delete-bg {
+            opacity: 1;
+        }
+
+        .trans-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 22px;
+        }
+
+        .trans-icon.income {
+            background: rgba(0, 186, 136, 0.12);
+        }
+
+        .trans-icon.expense {
+            background: rgba(255, 71, 87, 0.12);
+        }
+
+        .trans-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .trans-description {
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--text);
+            margin-bottom: 3px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .trans-meta {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .trans-amount {
+            font-weight: 900;
+            font-size: 16px;
+            text-align: right;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .trans-amount.income {
+            color: var(--success);
+        }
+
+        .trans-amount.expense {
+            color: var(--error);
+        }
+
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
+            background: var(--surface);
+            border-top: 1px solid var(--divider);
+            padding: 8px 20px 20px;
+            display: flex;
+            justify-content: space-around;
+            z-index: 100;
+            backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .dark .bottom-nav {
+            background: rgba(22, 24, 28, 0.9);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 20px;
+            border-radius: 12px;
+            color: var(--text-tertiary);
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .nav-item.active {
+            background: var(--hover);
+            color: var(--accent);
+        }
+
+        .nav-item:active {
+            transform: scale(0.94);
+        }
+
+        /* FAB */
+        .fab {
+            position: fixed;
+            bottom: 96px;
+            right: 24px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 24px rgba(91, 125, 255, 0.32);
+            cursor: pointer;
+            z-index: 99;
+        }
+
+        .fab:active {
+            transform: scale(0.88);
+        }
+
+        .fab.hidden {
+            display: none;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: flex-end;
+            z-index: 200;
+        }
+
+        .modal-content {
+            background: var(--bg);
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+            border-radius: 24px 24px 0 0;
+            padding: 24px 20px;
+            max-height: 88vh;
+            overflow-y: auto;
+        }
+
+        /* Alert/Popup */
+        .alert-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 300;
+            padding: 20px;
+        }
+
+        .alert-box {
+            background: var(--surface);
+            border-radius: 20px;
+            padding: 28px 24px;
+            max-width: 320px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .alert-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .alert-icon.error {
+            background: rgba(255, 71, 87, 0.15);
+            color: var(--error);
+        }
+
+        .alert-icon.success {
+            background: rgba(0, 186, 136, 0.15);
+            color: var(--success);
+        }
+
+        .alert-icon.warning {
+            background: rgba(255, 159, 67, 0.15);
+            color: #ff9f43;
+        }
+
+        .alert-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 12px;
+        }
+
+        .alert-message {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .alert-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .alert-btn {
+            flex: 1;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+        }
+
+        .alert-btn.primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .alert-btn.secondary {
+            background: var(--bg);
+            color: var(--text);
+            border: 1px solid var(--divider);
+        }
+
+        .alert-btn:active {
+            transform: scale(0.96);
+        }
+
+        /* Form */
+        .form-field {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--surface);
+            border: 1px solid var(--divider);
+            border-radius: 12px;
+            color: var(--text);
+            font-size: 15px;
+            font-weight: 500;
+            outline: none;
+        }
+
+        .form-field:focus {
+            border-color: var(--accent);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            background: var(--accent);
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary:active {
+            transform: scale(0.97);
+        }
+
+        .tag-btn {
+            padding: 10px 20px;
+            border-radius: 12px;
+            background: var(--surface);
+            border: 1px solid var(--divider);
+            color: var(--text);
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            font-size: 14px;
+        }
+
+        .tag-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        .tag-btn:active {
+            transform: scale(0.94);
+        }
+
+        /* Typography */
+        .heading {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text);
+            margin-bottom: 16px;
+        }
+
+        .field-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 48px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: var(--surface);
+            border: 1px solid var(--divider);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+
+        /* Progress Bar */
+        .progress-bar {
+            height: 6px;
+            background: var(--divider);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent);
+            border-radius: 6px;
+            transition: width 0.4s;
+        }
+
+        /* Settings Item */
+        .settings-item {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 16px;
+            border: 1px solid var(--divider);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .settings-item:active {
+            background: var(--hover);
+        }
+
+        /* Hide Nav */
+        .locked .bottom-nav,
+        .locked .fab {
+            display: none !important;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 0;
+        }
+
+        .scroll-container {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .scroll-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Filter Dropdown */
+        .filter-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            margin-top: 8px;
+            background: var(--surface);
+            border: 1px solid var(--divider);
+            border-radius: 12px;
+            padding: 8px;
+            box-shadow: 0 8px 24px var(--shadow);
+            z-index: 10;
+            min-width: 150px;
+        }
+
+        .filter-dropdown.show {
+            display: block;
+        }
+
+        .filter-option {
+            padding: 12px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text);
+        }
+
+        .filter-option:hover {
+            background: var(--hover);
+        }
+
+        .filter-option.active {
+            background: var(--accent);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="app" id="app">
+        <!-- Lock Screen -->
+        <div id="lockPage" class="page active lock-screen">
+            <div class="lock-content animate-in">
+                <div class="lock-icon-wrap">
+                    <span class="material-symbols-rounded" style="font-size: 40px; color: white;">lock</span>
+                </div>
+                
+                <h1 id="lockTitle" style="font-size: 28px; font-weight: 800; margin-bottom: 8px; color: var(--text);">Enter PIN</h1>
+                <p id="lockSubtitle" style="color: var(--text-secondary); margin-bottom: 44px; font-size: 15px; font-weight: 500;">Enter your 4-digit security PIN</p>
+                
+                <div class="pin-dots">
+                    <div class="pin-dot" id="dot1"></div>
+                    <div class="pin-dot" id="dot2"></div>
+                    <div class="pin-dot" id="dot3"></div>
+                    <div class="pin-dot" id="dot4"></div>
+                </div>
+
+                <div class="numpad">
+                    <button class="numpad-key" onclick="pinAdd('1')">1</button>
+                    <button class="numpad-key" onclick="pinAdd('2')">2</button>
+                    <button class="numpad-key" onclick="pinAdd('3')">3</button>
+                    <button class="numpad-key" onclick="pinAdd('4')">4</button>
+                    <button class="numpad-key" onclick="pinAdd('5')">5</button>
+                    <button class="numpad-key" onclick="pinAdd('6')">6</button>
+                    <button class="numpad-key" onclick="pinAdd('7')">7</button>
+                    <button class="numpad-key" onclick="pinAdd('8')">8</button>
+                    <button class="numpad-key" onclick="pinAdd('9')">9</button>
+                    <button class="numpad-key" onclick="pinDel()">
+                        <span class="material-symbols-rounded" style="font-size: 24px;">backspace</span>
+                    </button>
+                    <button class="numpad-key" onclick="pinAdd('0')">0</button>
+                    <button class="numpad-key primary" onclick="pinSubmit()">
+                        <span class="material-symbols-rounded" style="font-size: 24px;">check</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Home -->
+        <div id="homePage" class="page">
+            <div class="header">
+                <h1 class="brand" onclick="refreshPage()">ExpenseWise</h1>
+                <div class="icon-btn" onclick="lockApp()">
+                    <span class="material-symbols-rounded" style="font-size: 22px;">lock</span>
+                </div>
+            </div>
+
+            <!-- Compact Dashboard Container -->
+            <div class="dashboard-container animate-in">
+                <!-- Balance Section -->
+                <div class="balance-section">
+                    <div class="balance-label">Total Balance</div>
+                    <div class="balance-value" id="totalBalance">₹0.00</div>
+                </div>
+
+                <!-- Stats Row -->
+                <div class="stats-row">
+                    <div class="stat-box">
+                        <div class="stat-icon-wrap income">
+                            <span class="material-symbols-rounded" style="font-size: 18px;">arrow_upward</span>
+                        </div>
+                        <div class="stat-title">Income</div>
+                        <div class="stat-number" id="totalIncome">₹0</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-icon-wrap expense">
+                            <span class="material-symbols-rounded" style="font-size: 18px;">arrow_downward</span>
+                        </div>
+                        <div class="stat-title">Expenses</div>
+                        <div class="stat-number" id="totalExpense">₹0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="animate-in">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+                    <h2 class="heading" style="margin: 0;">Recent Activity</h2>
+                    <button onclick="navigateTo('transactions')" style="background: none; border: none; color: var(--accent); font-weight: 700; font-size: 14px; cursor: pointer; padding: 8px 16px;">View All</button>
+                </div>
+                <div id="recentTrans"></div>
+            </div>
+        </div>
+
+        <!-- Transactions -->
+        <div id="transactionsPage" class="page">
+            <div class="header">
+                <h1 class="brand">Transactions</h1>
+                <div class="icon-btn" onclick="lockApp()">
+                    <span class="material-symbols-rounded" style="font-size: 22px;">lock</span>
+                </div>
+            </div>
+
+            <!-- Search and Filter -->
+            <div class="search-wrapper">
+                <div class="search-bar">
+                    <span class="material-symbols-rounded search-icon" style="font-size: 20px;">search</span>
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search transactions..." oninput="searchTransactions()">
+                </div>
+                <div style="position: relative;">
+                    <div class="filter-icon" id="filterBtn" onclick="toggleFilterDropdown()">
+                        <span class="material-symbols-rounded" style="font-size: 20px;">filter_list</span>
+                        <span id="filterText">All</span>
+                    </div>
+                    <div class="filter-dropdown" id="filterDropdown">
+                        <div class="filter-option active" onclick="selectFilter('all')">All Transactions</div>
+                        <div class="filter-option" onclick="selectFilter('income')">Income Only</div>
+                        <div class="filter-option" onclick="selectFilter('expense')">Expenses Only</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="allTrans"></div>
+        </div>
+
+        <!-- Reports -->
+        <div id="reportsPage" class="page">
+            <div class="header">
+                <h1 class="brand">Reports</h1>
+                <div class="icon-btn" onclick="lockApp()">
+                    <span class="material-symbols-rounded" style="font-size: 22px;">lock</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="heading" id="reportMonth">This Month</h3>
+                <div style="display: grid; gap: 14px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px; background: var(--bg); border-radius: 12px;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(0, 186, 136, 0.1); display: flex; align-items: center; justify-content: center; color: var(--success);">
+                                <span class="material-symbols-rounded" style="font-size: 24px;">trending_up</span>
+                            </div>
+                            <span style="font-weight: 700; font-size: 15px; color: var(--text);">Income</span>
+                        </div>
+                        <span style="color: var(--success); font-weight: 800; font-size: 20px;" id="repIncome">₹0</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 14px; background: var(--bg); border-radius: 12px;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="width: 44px; height: 44px; border-radius: 12px; background: rgba(255, 71, 87, 0.1); display: flex; align-items: center; justify-content: center; color: var(--error);">
+                                <span class="material-symbols-rounded" style="font-size: 24px;">trending_down</span>
+                            </div>
+                            <span style="font-weight: 700; font-size: 15px; color: var(--text);">Expenses</span>
+                        </div>
+                        <span style="color: var(--error); font-weight: 800; font-size: 20px;" id="repExpense">₹0</span>
+                    </div>
+                    <div style="padding-top: 12px; border-top: 1px solid var(--divider);">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-weight: 800; font-size: 16px; color: var(--text);">Net Savings</span>
+                            <span style="font-weight: 900; font-size: 24px; color: var(--accent);" id="repSavings">₹0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bar Chart -->
+            <div class="card">
+                <h3 class="heading">Income vs Expenses</h3>
+                <div class="bar-chart">
+                    <div class="chart-bars" id="chartBars">
+                        <div class="bar-item">
+                            <div class="bar income" id="incomeBar" style="height: 0;">
+                                <div class="bar-value" id="incomeBarValue">₹0</div>
+                            </div>
+                            <div class="bar-label">Income</div>
+                        </div>
+                        <div class="bar-item">
+                            <div class="bar expense" id="expenseBar" style="height: 0;">
+                                <div class="bar-value" id="expenseBarValue">₹0</div>
+                            </div>
+                            <div class="bar-label">Expenses</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="heading">Category Breakdown</h3>
+                <div id="catBreakdown"></div>
+            </div>
+        </div>
+
+        <!-- Account -->
+        <div id="accountPage" class="page">
+            <div class="header">
+                <h1 class="brand">Settings</h1>
+                <div class="icon-btn" onclick="lockApp()">
+                    <span class="material-symbols-rounded" style="font-size: 22px;">lock</span>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-bottom: 32px;">
+                <div style="width: 80px; height: 80px; border-radius: 50%; background: var(--accent); margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; color: white; font-size: 40px; font-weight: 900; box-shadow: 0 8px 24px rgba(91, 125, 255, 0.24);">
+                    E
+                </div>
+                <h2 style="font-size: 22px; font-weight: 800; color: var(--text); margin-bottom: 6px;">ExpenseWise User</h2>
+                <p style="color: var(--text-secondary); font-size: 14px; font-weight: 500;">Personal Finance Manager</p>
+            </div>
+
+            <div class="settings-item" onclick="toggleTheme()">
+                <div style="width: 48px; height: 48px; border-radius: 12px; background: var(--bg); display: flex; align-items: center; justify-content: center;">
+                    <span class="material-symbols-rounded" id="themeIcon" style="font-size: 24px; color: var(--text);">dark_mode</span>
+                </div>
+                <div style="flex: 1;">
+                    <div style="font-weight: 700; font-size: 15px; color: var(--text); margin-bottom: 2px;">Appearance</div>
+                    <div style="font-size: 13px; color: var(--text-secondary); font-weight: 500;" id="themeText">Switch to dark mode</div>
+                </div>
+                <span class="material-symbols-rounded" style="color: var(--text-tertiary); font-size: 20px;">chevron_right</span>
+            </div>
+
+            <div class="settings-item" onclick="changePinCode()">
+                <div style="width: 48px; height: 48px; border-radius: 12px; background: var(--bg); display: flex; align-items: center; justify-content: center;">
+                    <span class="material-symbols-rounded" style="font-size: 24px; color: var(--text);">password</span>
+                </div>
+                <div style="flex: 1;">
+                    <div style="font-weight: 700; font-size: 15px; color: var(--text); margin-bottom: 2px;">Change PIN</div>
+                    <div style="font-size: 13px; color: var(--text-secondary); font-weight: 500;">Update security PIN</div>
+                </div>
+                <span class="material-symbols-rounded" style="color: var(--text-tertiary); font-size: 20px;">chevron_right</span>
+            </div>
+
+            <div class="settings-item" onclick="exportDataFile()">
+                <div style="width: 48px; height: 48px; border-radius: 12px; background: var(--bg); display: flex; align-items: center; justify-content: center;">
+                    <span class="material-symbols-rounded" style="font-size: 24px; color: var(--text);">download</span>
+                </div>
+                <div style="flex: 1;">
+                    <div style="font-weight: 700; font-size: 15px; color: var(--text); margin-bottom: 2px;">Export Data</div>
+                    <div style="font-size: 13px; color: var(--text-secondary); font-weight: 500;">Download financial report</div>
+                </div>
+                <span class="material-symbols-rounded" style="color: var(--text-tertiary); font-size: 20px;">chevron_right</span>
+            </div>
+
+            <div class="settings-item" onclick="clearAllData()">
+                <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(255, 71, 87, 0.1); display: flex; align-items: center; justify-content: center;">
+                    <span class="material-symbols-rounded" style="font-size: 24px; color: var(--error);">delete</span>
+                </div>
+                <div style="flex: 1;">
+                    <div style="font-weight: 700; font-size: 15px; color: var(--error); margin-bottom: 2px;">Clear All Data</div>
+                    <div style="font-size: 13px; color: var(--text-secondary); font-weight: 500;">Delete all transactions</div>
+                </div>
+                <span class="material-symbols-rounded" style="color: var(--text-tertiary); font-size: 20px;">chevron_right</span>
+            </div>
+
+            <div style="text-align: center; margin-top: 40px; color: var(--text-tertiary); font-size: 13px; font-weight: 500;">
+                <p>Version 1.0.0</p>
+                <p style="margin-top: 6px;">Modern • Stylish • Simple</p>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <div class="nav-item active" onclick="navigateTo('home')">
+                <span class="material-symbols-rounded" style="font-size: 24px;">home</span>
+                <span>Home</span>
+            </div>
+            <div class="nav-item" onclick="navigateTo('transactions')">
+                <span class="material-symbols-rounded" style="font-size: 24px;">receipt_long</span>
+                <span>Transactions</span>
+            </div>
+            <div class="nav-item" onclick="navigateTo('reports')">
+                <span class="material-symbols-rounded" style="font-size: 24px;">bar_chart</span>
+                <span>Reports</span>
+            </div>
+            <div class="nav-item" onclick="navigateTo('account')">
+                <span class="material-symbols-rounded" style="font-size: 24px;">settings</span>
+                <span>Settings</span>
+            </div>
+        </div>
+
+        <!-- FAB (Only on Home) -->
+        <div class="fab" id="fabButton" onclick="openTransactionModal()">
+            <span class="material-symbols-rounded" style="font-size: 32px;">add</span>
+        </div>
+    </div>
+
+    <!-- Add Transaction Modal -->
+    <div id="transactionModal" style="display: none;">
+        <div class="modal-overlay" onclick="closeTransactionModal(event)">
+            <div class="modal-content slide-up" onclick="event.stopPropagation()">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                    <h2 style="font-size: 22px; font-weight: 800; color: var(--text);">Add Transaction</h2>
+                    <div class="icon-btn" onclick="closeTransactionModal()">
+                        <span class="material-symbols-rounded" style="font-size: 22px;">close</span>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 24px;">
+                    <button id="incomeTypeBtn" class="tag-btn active" onclick="selectTransType('income')">
+                        <span class="material-symbols-rounded" style="font-size: 18px; vertical-align: middle; margin-right: 4px;">add</span>
+                        Income
+                    </button>
+                    <button id="expenseTypeBtn" class="tag-btn" onclick="selectTransType('expense')">
+                        <span class="material-symbols-rounded" style="font-size: 18px; vertical-align: middle; margin-right: 4px;">remove</span>
+                        Expense
+                    </button>
+                </div>
+
+                <label class="field-label">Amount</label>
+                <input type="number" id="transAmount" class="form-field" placeholder="0.00" step="0.01" style="margin-bottom: 18px;">
+
+                <label class="field-label">Category</label>
+                <select id="transCategory" class="form-field" style="margin-bottom: 18px;">
+                    <!-- Categories will be populated dynamically -->
+                </select>
+
+                <label class="field-label">Description</label>
+                <input type="text" id="transDescription" class="form-field" placeholder="Enter description" style="margin-bottom: 18px;">
+
+                <label class="field-label">Date</label>
+                <input type="date" id="transDate" class="form-field" style="margin-bottom: 24px;">
+
+                <button class="btn-primary" onclick="saveTransaction()">
+                    <span class="material-symbols-rounded" style="font-size: 20px; vertical-align: middle; margin-right: 8px;">check</span>
+                    Save Transaction
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert/Popup Container -->
+    <div id="alertContainer"></div>
+
+    <script>
+        let pin='',isSet=false,storedPin='',currentPage='home',transType='income',transactions=[],darkMode=false;
+        let searchQuery='',filterType='all';
+        let swipeStartX=0,swipeCurrentX=0,swipeElement=null,isSwiping=false;
+
+        // Categories based on transaction type
+        const categories = {
+            income: [
+                { value: 'Salary', label: '💰 Salary', icon: '💰' },
+                { value: 'Stocks', label: '📈 Stocks', icon: '📈' },
+                { value: 'Interest', label: '🏦 Interest', icon: '🏦' },
+                { value: 'Other Income', label: '💵 Other', icon: '💵' }
+            ],
+            expense: [
+                { value: 'Food', label: '🍔 Food & Dining', icon: '🍔' },
+                { value: 'Transport', label: '🚗 Transportation', icon: '🚗' },
+                { value: 'Shopping', label: '🛍️ Shopping', icon: '🛍️' },
+                { value: 'Entertainment', label: '🎬 Entertainment', icon: '🎬' },
+                { value: 'Bills', label: '💡 Bills & Utilities', icon: '💡' },
+                { value: 'Health', label: '⚕️ Healthcare', icon: '⚕️' },
+                { value: 'Education', label: '📚 Education', icon: '📚' },
+                { value: 'Other Expense', label: '📦 Other', icon: '📦' }
+            ]
+        };
+
+        // Alert/Popup Functions
+        function showAlert(type, title, message, onConfirm, showCancel = false) {
+            const alertContainer = document.getElementById('alertContainer');
+            
+            const iconMap = {
+                error: { icon: 'error', class: 'error' },
+                success: { icon: 'check_circle', class: 'success' },
+                warning: { icon: 'warning', class: 'warning' },
+                info: { icon: 'info', class: 'error' }
+            };
+
+            const { icon, class: iconClass } = iconMap[type] || iconMap.error;
+
+            const alertHTML = `
+                <div class="alert-overlay pop-in" id="alertOverlay">
+                    <div class="alert-box pop-in">
+                        <div class="alert-icon ${iconClass}">
+                            <span class="material-symbols-rounded" style="font-size: 32px;">${icon}</span>
+                        </div>
+                        <h3 class="alert-title">${title}</h3>
+                        <p class="alert-message">${message}</p>
+                        <div class="alert-buttons">
+                            ${showCancel ? '<button class="alert-btn secondary" onclick="closeAlert()">Cancel</button>' : ''}
+                            <button class="alert-btn primary" onclick="handleAlertConfirm()">OK</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            alertContainer.innerHTML = alertHTML;
+            window.alertConfirmCallback = onConfirm;
+        }
+
+        function closeAlert() {
+            const alertContainer = document.getElementById('alertContainer');
+            alertContainer.innerHTML = '';
+            window.alertConfirmCallback = null;
+        }
+
+        function handleAlertConfirm() {
+            if (window.alertConfirmCallback) {
+                window.alertConfirmCallback();
+            }
+            closeAlert();
+        }
+
+        // Filter Dropdown
+        function toggleFilterDropdown() {
+            const dropdown = document.getElementById('filterDropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        function selectFilter(type) {
+            filterType = type;
+            const options = document.querySelectorAll('.filter-option');
+            options.forEach(opt => opt.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            const filterText = document.getElementById('filterText');
+            const filterBtn = document.getElementById('filterBtn');
+            
+            if (type === 'all') {
+                filterText.textContent = 'All';
+                filterBtn.classList.remove('active');
+            } else if (type === 'income') {
+                filterText.textContent = 'Income';
+                filterBtn.classList.add('active');
+            } else {
+                filterText.textContent = 'Expenses';
+                filterBtn.classList.add('active');
+            }
+            
+            toggleFilterDropdown();
+            loadAllTransactions();
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('filterDropdown');
+            const filterBtn = document.getElementById('filterBtn');
+            if (dropdown && !filterBtn.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        // Search and Filter Functions
+        function searchTransactions() {
+            searchQuery = document.getElementById('searchInput').value.toLowerCase();
+            loadAllTransactions();
+        }
+
+        function getFilteredTransactions() {
+            let filtered = transactions;
+
+            // Apply type filter
+            if (filterType !== 'all') {
+                filtered = filtered.filter(t => t.type === filterType);
+            }
+
+            // Apply search query
+            if (searchQuery) {
+                filtered = filtered.filter(t => 
+                    t.description.toLowerCase().includes(searchQuery) ||
+                    t.category.toLowerCase().includes(searchQuery) ||
+                    t.amount.toString().includes(searchQuery) ||
+                    new Date(t.date).toLocaleDateString('en-IN').toLowerCase().includes(searchQuery)
+                );
+            }
+
+            return filtered;
+        }
+
+        // Swipe to Delete Functions
+        function initSwipe() {
+            const container = document.getElementById('allTrans');
+            
+            container.addEventListener('touchstart', handleTouchStart, { passive: true });
+            container.addEventListener('touchmove', handleTouchMove, { passive: false });
+            container.addEventListener('touchend', handleTouchEnd);
+            
+            container.addEventListener('mousedown', handleMouseDown);
+            container.addEventListener('mousemove', handleMouseMove);
+            container.addEventListener('mouseup', handleMouseUp);
+        }
+
+        function handleTouchStart(e) {
+            const target = e.target.closest('.transaction-item');
+            if (target) {
+                swipeElement = target;
+                swipeStartX = e.touches[0].clientX;
+                isSwiping = true;
+                swipeElement.classList.add('swiping');
+            }
+        }
+
+        function handleTouchMove(e) {
+            if (!isSwiping || !swipeElement) return;
+            
+            swipeCurrentX = e.touches[0].clientX;
+            const diff = swipeCurrentX - swipeStartX;
+            
+            if (Math.abs(diff) > 10) {
+                e.preventDefault();
+                swipeElement.style.transform = `translateX(${diff}px)`;
+                
+                if (Math.abs(diff) > 80) {
+                    swipeElement.parentElement.classList.add('deleting');
+                } else {
+                    swipeElement.parentElement.classList.remove('deleting');
+                }
+            }
+        }
+
+        function handleTouchEnd(e) {
+            if (!isSwiping || !swipeElement) return;
+            
+            const diff = swipeCurrentX - swipeStartX;
+            
+            if (Math.abs(diff) > 100) {
+                const transId = parseInt(swipeElement.getAttribute('data-id'));
+                confirmDelete(transId);
+            } else {
+                swipeElement.style.transform = '';
+                swipeElement.parentElement.classList.remove('deleting');
+            }
+            
+            swipeElement.classList.remove('swiping');
+            swipeElement = null;
+            isSwiping = false;
+            swipeStartX = 0;
+            swipeCurrentX = 0;
+        }
+
+        function handleMouseDown(e) {
+            const target = e.target.closest('.transaction-item');
+            if (target) {
+                swipeElement = target;
+                swipeStartX = e.clientX;
+                isSwiping = true;
+                swipeElement.classList.add('swiping');
+            }
+        }
+
+        function handleMouseMove(e) {
+            if (!isSwiping || !swipeElement) return;
+            
+            swipeCurrentX = e.clientX;
+            const diff = swipeCurrentX - swipeStartX;
+            
+            if (Math.abs(diff) > 10) {
+                swipeElement.style.transform = `translateX(${diff}px)`;
+                
+                if (Math.abs(diff) > 80) {
+                    swipeElement.parentElement.classList.add('deleting');
+                } else {
+                    swipeElement.parentElement.classList.remove('deleting');
+                }
+            }
+        }
+
+        function handleMouseUp(e) {
+            if (!isSwiping || !swipeElement) return;
+            
+            const diff = swipeCurrentX - swipeStartX;
+            
+            if (Math.abs(diff) > 100) {
+                const transId = parseInt(swipeElement.getAttribute('data-id'));
+                confirmDelete(transId);
+            } else {
+                swipeElement.style.transform = '';
+                swipeElement.parentElement.classList.remove('deleting');
+            }
+            
+            swipeElement.classList.remove('swiping');
+            swipeElement = null;
+            isSwiping = false;
+            swipeStartX = 0;
+            swipeCurrentX = 0;
+        }
+
+        function confirmDelete(id) {
+            showAlert('warning', 'Delete Transaction', 'Are you sure you want to delete this transaction? This action cannot be undone.', () => {
+                deleteTransaction(id);
+            }, true);
+        }
+
+        // Update FAB visibility based on current page
+        function updateFABVisibility() {
+            const fab = document.getElementById('fabButton');
+            if (currentPage === 'home') {
+                fab.classList.remove('hidden');
+            } else {
+                fab.classList.add('hidden');
+            }
+        }
+
+        function init(){
+            loadTheme();
+            storedPin=localStorage.getItem('expenseWisePin')||'';
+            transactions=JSON.parse(localStorage.getItem('expenseWiseTransactions')||'[]');
+            document.getElementById('app').classList.add('locked');
+            if(!storedPin){
+                isSet=true;
+                document.getElementById('lockTitle').textContent='Create PIN';
+                document.getElementById('lockSubtitle').textContent='Set your 4-digit security PIN';
+            }
+            document.getElementById('transDate').value=new Date().toISOString().split('T')[0];
+            updateCategoryOptions();
+            updateFABVisibility();
+            initSwipe();
+        }
+
+        function updateCategoryOptions() {
+            const categorySelect = document.getElementById('transCategory');
+            const currentCategories = categories[transType];
+            
+            categorySelect.innerHTML = currentCategories.map(cat => 
+                `<option value="${cat.value}">${cat.label}</option>`
+            ).join('');
+        }
+
+        function pinAdd(d){
+            if(pin.length<4){
+                pin+=d;
+                updatePinDots();
+                if(pin.length===4)setTimeout(pinSubmit,200);
+            }
+        }
+
+        function pinDel(){
+            if(pin.length){
+                pin=pin.slice(0,-1);
+                updatePinDots();
+            }
+        }
+
+        function updatePinDots(){
+    for(let i=1;i<=4;i++){
+        document.getElementById('dot'+i).classList.toggle('filled',i<=pin.length);
+    }
+}
+
+
+        function pinSubmit(){
+            if(pin.length!==4)return;
+            if(isSet){
+                localStorage.setItem('expenseWisePin',pin);
+                storedPin=pin;
+                isSet=false;
+                unlockApp();
+                showAlert('success', 'PIN Created', 'Your security PIN has been set successfully!');
+            }else{
+                if(pin===storedPin)unlockApp();
+                else{
+                    document.querySelectorAll('.pin-dot').forEach(d=>{
+                        d.style.animation='shake 0.3s ease';
+                        setTimeout(()=>d.style.animation='',300);
+                    });
+                    pin='';
+                    updatePinDots();
+                    showAlert('error', 'Incorrect PIN', 'The PIN you entered is incorrect. Please try again.');
+                }
+            }
+        }
+
+        function unlockApp(){
+            document.getElementById('app').classList.remove('locked');
+            document.getElementById('lockPage').classList.remove('active');
+            document.getElementById('homePage').classList.add('active');
+            pin='';
+            updatePinDots();
+            updateDashboard();
+            loadRecentTransactions();
+            generateReport();
+            updateFABVisibility();
+        }
+
+        function lockApp(){
+            document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+            document.getElementById('lockPage').classList.add('active');
+            document.getElementById('lockTitle').textContent='Enter PIN';
+            document.getElementById('lockSubtitle').textContent='Enter your 4-digit security PIN';
+            pin='';
+            updatePinDots();
+            document.getElementById('app').classList.add('locked');
+        }
+
+        function loadTheme(){
+            darkMode=localStorage.getItem('expenseWiseTheme')==='dark';
+            document.getElementById('app').classList.toggle('dark',darkMode);
+            updateThemeUI();
+        }
+
+        function toggleTheme(){
+            darkMode=!darkMode;
+            document.getElementById('app').classList.toggle('dark',darkMode);
+            localStorage.setItem('expenseWiseTheme',darkMode?'dark':'light');
+            updateThemeUI();
+        }
+
+        function updateThemeUI(){
+            document.getElementById('themeIcon').textContent=darkMode?'light_mode':'dark_mode';
+            document.getElementById('themeText').textContent=darkMode?'Switch to light mode':'Switch to dark mode';
+        }
+
+        function navigateTo(page){
+            document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+            document.getElementById(page+'Page').classList.add('active');
+            const navs=document.querySelectorAll('.nav-item');
+            const idx=['home','transactions','reports','account'].indexOf(page);
+            if(idx!==-1)navs[idx].classList.add('active');
+            currentPage=page;
+            updateFABVisibility();
+            if(page==='transactions'){
+                searchQuery='';
+                filterType='all';
+                document.getElementById('searchInput').value='';
+                document.getElementById('filterText').textContent='All';
+                document.getElementById('filterBtn').classList.remove('active');
+                loadAllTransactions();
+            }
+            else if(page==='reports')generateReport();
+        }
+
+        function refreshPage(){
+            updateDashboard();
+            loadRecentTransactions();
+            if(currentPage==='transactions')loadAllTransactions();
+            else if(currentPage==='reports')generateReport();
+        }
+
+        function openTransactionModal(){
+            document.getElementById('transactionModal').style.display='block';
+            transType='income';
+            document.getElementById('incomeTypeBtn').classList.add('active');
+            document.getElementById('expenseTypeBtn').classList.remove('active');
+            document.getElementById('transAmount').value='';
+            document.getElementById('transDescription').value='';
+            document.getElementById('transDate').value=new Date().toISOString().split('T')[0];
+            updateCategoryOptions();
+        }
+
+        function closeTransactionModal(e){
+            if(!e||e.target.classList.contains('modal-overlay')){
+                document.getElementById('transactionModal').style.display='none';
+            }
+        }
+
+        function selectTransType(type){
+            transType=type;
+            document.getElementById('incomeTypeBtn').classList.toggle('active',type==='income');
+            document.getElementById('expenseTypeBtn').classList.toggle('active',type==='expense');
+            updateCategoryOptions();
+        }
+
+        function saveTransaction(){
+            const amount=parseFloat(document.getElementById('transAmount').value);
+            const category=document.getElementById('transCategory').value;
+            const description=document.getElementById('transDescription').value;
+            const date=document.getElementById('transDate').value;
+            
+            if(!amount||amount<=0){
+                showAlert('error', 'Invalid Amount', 'Please enter a valid amount greater than 0.');
+                return;
+            }
+            if(!description.trim()){
+                showAlert('error', 'Missing Description', 'Please enter a description for this transaction.');
+                return;
+            }
+            
+            transactions.unshift({id:Date.now(),type:transType,amount,category,description,date});
+            localStorage.setItem('expenseWiseTransactions',JSON.stringify(transactions));
+            closeTransactionModal();
+            updateDashboard();
+            loadRecentTransactions();
+            if(currentPage==='transactions')loadAllTransactions();
+            else if(currentPage==='reports')generateReport();
+            
+            showAlert('success', 'Transaction Added', `Your ${transType} of ₹${amount.toFixed(2)} has been recorded successfully!`);
+        }
+
+        function deleteTransaction(id){
+            transactions=transactions.filter(t=>t.id!==id);
+            localStorage.setItem('expenseWiseTransactions',JSON.stringify(transactions));
+            updateDashboard();
+            loadRecentTransactions();
+            loadAllTransactions();
+            generateReport();
+            showAlert('success', 'Deleted', 'Transaction has been deleted successfully.');
+        }
+
+        function updateDashboard(){
+            let income=0,expense=0;
+            transactions.forEach(t=>{
+                if(t.type==='income')income+=t.amount;
+                else expense+=t.amount;
+            });
+            document.getElementById('totalBalance').textContent=`₹${(income-expense).toFixed(2)}`;
+            document.getElementById('totalIncome').textContent=`₹${income.toFixed(2)}`;
+            document.getElementById('totalExpense').textContent=`₹${expense.toFixed(2)}`;
+        }
+
+        function loadRecentTransactions(){
+            const container=document.getElementById('recentTrans');
+            const recent=transactions.slice(0,5);
+            if(!recent.length){
+                container.innerHTML=`
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <span class="material-symbols-rounded" style="font-size: 32px; color: var(--text-tertiary);">receipt_long</span>
+                        </div>
+                        <p style="font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 4px;">No transactions yet</p>
+                        <p style="font-size: 13px;">Tap + to add your first transaction</p>
+                    </div>
+                `;
+                return;
+            }
+            container.innerHTML=recent.map(t=>createTransactionItem(t,false)).join('');
+        }
+
+        function loadAllTransactions(){
+            const container=document.getElementById('allTrans');
+            const filtered = getFilteredTransactions();
+            
+            if(!filtered.length){
+                const message = searchQuery ? `No results for "${searchQuery}"` : filterType !== 'all' ? `No ${filterType} transactions` : 'No transactions';
+                container.innerHTML=`
+                    <div class="empty-state">
+                        <div class="empty-icon">
+                            <span class="material-symbols-rounded" style="font-size: 32px; color: var(--text-tertiary);">search_off</span>
+                        </div>
+                        <p style="font-size: 15px; font-weight: 600; color: var(--text);">${message}</p>
+                    </div>
+                `;
+                return;
+            }
+            container.innerHTML=filtered.map(t=>createSwipeableTransaction(t)).join('');
+        }
+
+        function getCategoryIcon(category) {
+            const allCategories = [...categories.income, ...categories.expense];
+            const cat = allCategories.find(c => c.value === category);
+            return cat ? cat.icon : '📦';
+        }
+
+        function createTransactionItem(t, swipeable = false){
+            const isIncome=t.type==='income';
+            const date=new Date(t.date).toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+            const categoryIcon = getCategoryIcon(t.category);
+            
+            return`
+                <div class="transaction-item" ${swipeable ? `data-id="${t.id}"` : ''}>
+                    <div class="trans-icon ${isIncome?'income':'expense'}">
+                        ${categoryIcon}
+                    </div>
+                    <div class="trans-details">
+                        <div class="trans-description">${t.description}</div>
+                        <div class="trans-meta">${t.category} • ${date}</div>
+                    </div>
+                    <div class="trans-amount ${isIncome?'income':'expense'}">
+                        ${isIncome?'+':'-'}₹${t.amount.toFixed(2)}
+                    </div>
+                </div>
+            `;
+        }
+
+        function createSwipeableTransaction(t){
+            const isIncome=t.type==='income';
+            const date=new Date(t.date).toLocaleDateString('en-IN',{day:'numeric',month:'short'});
+            const categoryIcon = getCategoryIcon(t.category);
+            
+            return`
+                <div class="transaction-wrapper">
+                    <div class="delete-bg">
+                        <span class="material-symbols-rounded" style="font-size: 24px; margin-right: 8px;">delete</span>
+                        Swipe to delete
+                    </div>
+                    <div class="transaction-item" data-id="${t.id}">
+                        <div class="trans-icon ${isIncome?'income':'expense'}">
+                            ${categoryIcon}
+                        </div>
+                        <div class="trans-details">
+                            <div class="trans-description">${t.description}</div>
+                            <div class="trans-meta">${t.category} • ${date}</div>
+                        </div>
+                        <div class="trans-amount ${isIncome?'income':'expense'}">
+                            ${isIncome?'+':'-'}₹${t.amount.toFixed(2)}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Generate Report for Current Month
+        function generateReport(){
+            const now = new Date();
+            const currentMonth = now.getMonth();
+            const currentYear = now.getFullYear();
+            const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+            
+            // Filter transactions for current month
+            const filtered=transactions.filter(t=>{
+                const d=new Date(t.date);
+                return d.getMonth()===currentMonth && d.getFullYear()===currentYear;
+            });
+            
+            let income=0,expense=0;
+            const cats={};
+            
+            filtered.forEach(t=>{
+                if(t.type==='income'){
+                    income+=t.amount;
+                }else{
+                    expense+=t.amount;
+                    cats[t.category]=(cats[t.category]||0)+t.amount;
+                }
+            });
+            
+            // Update report title
+            document.getElementById('reportMonth').textContent=`${months[currentMonth]} ${currentYear}`;
+            document.getElementById('repIncome').textContent=`₹${income.toFixed(2)}`;
+            document.getElementById('repExpense').textContent=`₹${expense.toFixed(2)}`;
+            document.getElementById('repSavings').textContent=`₹${(income-expense).toFixed(2)}`;
+            
+            // Update Bar Chart
+            updateBarChart(income, expense);
+            
+            // Category Breakdown
+            const container=document.getElementById('catBreakdown');
+            if(!Object.keys(cats).length){
+                container.innerHTML='<div style="text-align:center;padding:32px;color:var(--text-secondary);font-size:14px;">No expense data for this month</div>';
+            }else{
+                container.innerHTML=Object.entries(cats).sort((a,b)=>b[1]-a[1]).map(([cat,amt])=>{
+                    const pct=expense>0?(amt/expense*100).toFixed(1):0;
+                    const categoryIcon = getCategoryIcon(cat);
+                    return`
+                        <div style="margin-bottom:20px;">
+                            <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
+                                <span style="font-weight:700;font-size:14px;color:var(--text);">${categoryIcon} ${cat}</span>
+                                <span style="font-weight:800;font-size:14px;color:var(--text);">₹${amt.toFixed(2)} <span style="opacity:0.5;font-size:12px;">${pct}%</span></span>
+                            </div>
+                            <div class="progress-bar"><div class="progress-fill" style="width:${pct}%;"></div></div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        // Update Bar Chart
+        function updateBarChart(income, expense) {
+            const maxValue = Math.max(income, expense, 1);
+            const incomeHeight = (income / maxValue) * 100;
+            const expenseHeight = (expense / maxValue) * 100;
+            
+            document.getElementById('incomeBar').style.height = incomeHeight + '%';
+            document.getElementById('expenseBar').style.height = expenseHeight + '%';
+            document.getElementById('incomeBarValue').textContent = '₹' + income.toFixed(0);
+            document.getElementById('expenseBarValue').textContent = '₹' + expense.toFixed(0);
+        }
+
+        // Change PIN with Old PIN Verification
+        function changePinCode(){
+            showAlert('info', 'Verify Identity', 'Enter your current PIN to continue:', () => {
+                const oldPin = prompt('Enter your current PIN:');
+                if(!oldPin) return;
+                
+                if(oldPin === storedPin){
+                    const newPin = prompt('Enter new 4-digit PIN:');
+                    if(newPin && newPin.length===4 && /^\d+$/.test(newPin)){
+                        localStorage.setItem('expenseWisePin', newPin);
+                        storedPin = newPin;
+                        showAlert('success', 'PIN Updated', 'Your security PIN has been changed successfully!');
+                    } else if(newPin) {
+                        showAlert('error', 'Invalid PIN', 'PIN must be exactly 4 digits.');
+                    }
+                } else {
+                    showAlert('error', 'Incorrect PIN', 'The current PIN you entered is incorrect.');
+                }
+            });
+        }
+
+        // Export Detailed Financial Report (Locked on 5th of every month)
+        function exportDataFile(){
+            const today = new Date().getDate();
+            
+            if(today !== 5){
+                showAlert('warning', 'Export Locked', `Financial data export is only available on the 5th of each month. Please try again on the 5th.`);
+                return;
+            }
+            
+            if(transactions.length === 0){
+                showAlert('warning', 'No Data', 'There are no transactions to export.');
+                return;
+            }
+            
+            // Generate detailed financial report
+            const now = new Date();
+            const reportData = generateDetailedReport();
+            
+            const blob = new Blob([reportData], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `ExpenseWise_Financial_Report_${now.toISOString().split('T')[0]}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showAlert('success', 'Export Successful', 'Your detailed financial report has been downloaded!');
+        }
+
+        // Generate Detailed Financial Report
+        function generateDetailedReport() {
+            const now = new Date();
+            let report = '';
+            
+            report += '═══════════════════════════════════════════════════\n';
+            report += '           EXPENSEWISE FINANCIAL REPORT            \n';
+            report += '═══════════════════════════════════════════════════\n\n';
+            report += `Generated: ${now.toLocaleString('en-IN')}\n\n`;
+            
+            // Overall Summary
+            let totalIncome = 0, totalExpense = 0;
+            transactions.forEach(t => {
+                if(t.type === 'income') totalIncome += t.amount;
+                else totalExpense += t.amount;
+            });
+            
+            report += '────────────────── OVERALL SUMMARY ───────────────────\n\n';
+            report += `Total Income:        ₹${totalIncome.toFixed(2)}\n`;
+            report += `Total Expenses:      ₹${totalExpense.toFixed(2)}\n`;
+            report += `Net Balance:         ₹${(totalIncome - totalExpense).toFixed(2)}\n`;
+            report += `Total Transactions:  ${transactions.length}\n\n`;
+            
+            // Monthly Breakdown
+            const monthlyData = {};
+            transactions.forEach(t => {
+                const date = new Date(t.date);
+                const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                if(!monthlyData[key]) monthlyData[key] = { income: 0, expense: 0, count: 0 };
+                if(t.type === 'income') monthlyData[key].income += t.amount;
+                else monthlyData[key].expense += t.amount;
+                monthlyData[key].count++;
+            });
+            
+            report += '────────────────── MONTHLY BREAKDOWN ────────────────\n\n';
+            Object.keys(monthlyData).sort().reverse().forEach(month => {
+                const data = monthlyData[month];
+                const [year, mon] = month.split('-');
+                const monthName = new Date(year, mon - 1).toLocaleString('en-IN', { month: 'long', year: 'numeric' });
+                report += `${monthName}:\n`;
+                report += `  Income:      ₹${data.income.toFixed(2)}\n`;
+                report += `  Expenses:    ₹${data.expense.toFixed(2)}\n`;
+                report += `  Savings:     ₹${(data.income - data.expense).toFixed(2)}\n`;
+                report += `  Transactions: ${data.count}\n\n`;
+            });
+            
+            // Category Breakdown
+            const categoryData = {};
+            transactions.filter(t => t.type === 'expense').forEach(t => {
+                if(!categoryData[t.category]) categoryData[t.category] = 0;
+                categoryData[t.category] += t.amount;
+            });
+            
+            if(Object.keys(categoryData).length > 0){
+                report += '────────────────── EXPENSE CATEGORIES ───────────────\n\n';
+                Object.entries(categoryData).sort((a,b) => b[1] - a[1]).forEach(([cat, amt]) => {
+                    const pct = (amt / totalExpense * 100).toFixed(1);
+                    report += `${getCategoryIcon(cat)} ${cat.padEnd(20)} ₹${amt.toFixed(2).padStart(12)} (${pct}%)\n`;
+                });
+                report += '\n';
+            }
+            
+            // All Transactions
+            report += '────────────────── ALL TRANSACTIONS ──────────────────\n\n';
+            transactions.slice().reverse().forEach((t, i) => {
+                const date = new Date(t.date).toLocaleDateString('en-IN');
+                const type = t.type === 'income' ? 'INCOME' : 'EXPENSE';
+                const sign = t.type === 'income' ? '+' : '-';
+                report += `${i + 1}. ${date} | ${type.padEnd(7)} | ${t.category.padEnd(15)} | ${sign}₹${t.amount.toFixed(2).padStart(10)}\n`;
+                report += `   ${t.description}\n\n`;
+            });
+            
+            report += '═══════════════════════════════════════════════════\n';
+            report += '            END OF FINANCIAL REPORT                \n';
+            report += '═══════════════════════════════════════════════════\n';
+            
+            return report;
+        }
+
+        // Clear All Data with Confirmation
+        function clearAllData(){
+            showAlert('warning', 'Clear All Data', 'This will permanently delete ALL your transactions and data. This action CANNOT be undone!', () => {
+                showAlert('error', 'Final Confirmation', 'Are you absolutely sure? All your financial data will be lost forever!', () => {
+                    localStorage.removeItem('expenseWiseTransactions');
+                    transactions = [];
+                    updateDashboard();
+                    loadRecentTransactions();
+                    loadAllTransactions();
+                    generateReport();
+                    showAlert('success', 'Data Cleared', 'All your transaction data has been permanently deleted.');
+                }, true);
+            }, true);
+        }
+
+        window.onload=init;
+        /**
+ * Advanced Mobile Viewport Manager
+ * Handles screen size detection, safe areas, notches, and dynamic element adjustment
+ */
+
+class MobileViewportManager {
+    constructor() {
+        this.viewport = {
+            width: 0,
+            height: 0,
+            safeAreaInsets: { top: 0, right: 0, bottom: 0, left: 0 },
+            orientation: 'portrait',
+            deviceType: 'mobile',
+            hasNotch: false,
+            pixelRatio: window.devicePixelRatio || 1
+        };
+        
+        this.breakpoints = {
+            xs: 320,    // Small phones
+            sm: 375,    // iPhone SE, 8
+            md: 390,    // iPhone 12/13/14
+            lg: 428,    // iPhone 14 Pro Max
+            xl: 480     // Large phones/small tablets
+        };
+        
+        this.init();
+    }
+
+    init() {
+        this.detectViewport();
+        this.detectSafeAreas();
+        this.detectNotch();
+        this.applyResponsiveStyles();
+        this.setupEventListeners();
+        this.adjustAllElements();
+    }
+
+    /**
+     * Detect viewport dimensions and characteristics
+     */
+    detectViewport() {
+        // Get actual viewport dimensions
+        this.viewport.width = window.innerWidth;
+        this.viewport.height = window.innerHeight;
+        
+        // Detect orientation
+        this.viewport.orientation = window.innerWidth > window.innerHeight ? 'landscape' : 'portrait';
+        
+        // Detect device type
+        const userAgent = navigator.userAgent.toLowerCase();
+        this.viewport.deviceType = /mobile|android|iphone|ipad|tablet/.test(userAgent) ? 'mobile' : 'desktop';
+        
+        // Get device pixel ratio
+        this.viewport.pixelRatio = window.devicePixelRatio || 1;
+        
+        // Determine size category
+        this.viewport.sizeCategory = this.getSizeCategory();
+        
+        console.log('📱 Viewport Detected:', this.viewport);
+    }
+
+    /**
+     * Detect safe area insets (for notched devices)
+     */
+    detectSafeAreas() {
+        // Use CSS environment variables for safe areas
+        const style = getComputedStyle(document.documentElement);
+        
+        this.viewport.safeAreaInsets = {
+            top: parseInt(style.getPropertyValue('--sat') || 
+                         style.getPropertyValue('env(safe-area-inset-top)') || '0'),
+            right: parseInt(style.getPropertyValue('--sar') || 
+                           style.getPropertyValue('env(safe-area-inset-right)') || '0'),
+            bottom: parseInt(style.getPropertyValue('--sab') || 
+                            style.getPropertyValue('env(safe-area-inset-bottom)') || '0'),
+            left: parseInt(style.getPropertyValue('--sal') || 
+                          style.getPropertyValue('env(safe-area-inset-left)') || '0')
+        };
+        
+        // Fallback detection for common devices
+        if (this.viewport.safeAreaInsets.top === 0) {
+            this.detectSafeAreasFallback();
+        }
+        
+        console.log('🛡️ Safe Areas:', this.viewport.safeAreaInsets);
+    }
+
+    /**
+     * Fallback detection for devices without CSS environment variables
+     */
+    detectSafeAreasFallback() {
+        const { height, width } = this.viewport;
+        const userAgent = navigator.userAgent;
+        
+        // iPhone X and newer detection
+        if (/iPhone/.test(userAgent)) {
+            // iPhone 14 Pro/Pro Max with Dynamic Island
+            if ((height === 932 && width === 430) || (height === 852 && width === 393)) {
+                this.viewport.safeAreaInsets.top = 59;
+                this.viewport.safeAreaInsets.bottom = 34;
+            }
+            // iPhone X/XS/11 Pro
+            else if (height === 812 && width === 375) {
+                this.viewport.safeAreaInsets.top = 44;
+                this.viewport.safeAreaInsets.bottom = 34;
+            }
+            // iPhone XR/11/12/13
+            else if (height === 896 && (width === 414 || width === 390)) {
+                this.viewport.safeAreaInsets.top = 48;
+                this.viewport.safeAreaInsets.bottom = 34;
+            }
+            // iPhone 12/13 Mini
+            else if (height === 812 && width === 375) {
+                this.viewport.safeAreaInsets.top = 50;
+                this.viewport.safeAreaInsets.bottom = 34;
+            }
+        }
+        
+        // Android notched devices
+        if (/Android/.test(userAgent) && height > 800) {
+            this.viewport.safeAreaInsets.top = Math.max(24, this.viewport.safeAreaInsets.top);
+        }
+    }
+
+    /**
+     * Detect if device has a notch/dynamic island
+     */
+    detectNotch() {
+        this.viewport.hasNotch = this.viewport.safeAreaInsets.top > 20 || 
+                                  this.viewport.safeAreaInsets.bottom > 20;
+        
+        // Additional detection based on screen ratio
+        const aspectRatio = this.viewport.height / this.viewport.width;
+        if (aspectRatio > 2) {
+            this.viewport.hasNotch = true;
+        }
+    }
+
+    /**
+     * Get size category based on width
+     */
+    getSizeCategory() {
+        const w = this.viewport.width;
+        if (w < this.breakpoints.xs) return 'xs';
+        if (w < this.breakpoints.sm) return 'sm';
+        if (w < this.breakpoints.md) return 'md';
+        if (w < this.breakpoints.lg) return 'lg';
+        return 'xl';
+    }
+
+    /**
+     * Apply responsive CSS custom properties
+     */
+    applyResponsiveStyles() {
+        const root = document.documentElement;
+        const { width, height, safeAreaInsets, sizeCategory, hasNotch } = this.viewport;
+        
+        // Set viewport dimensions
+        root.style.setProperty('--vw', `${width}px`);
+        root.style.setProperty('--vh', `${height}px`);
+        root.style.setProperty('--vh-real', `${window.innerHeight}px`);
+        
+        // Set safe area insets
+        root.style.setProperty('--sat', `${safeAreaInsets.top}px`);
+        root.style.setProperty('--sar', `${safeAreaInsets.right}px`);
+        root.style.setProperty('--sab', `${safeAreaInsets.bottom}px`);
+        root.style.setProperty('--sal', `${safeAreaInsets.left}px`);
+        
+        // Dynamic spacing based on screen size
+        const baseSpacing = this.calculateBaseSpacing();
+        root.style.setProperty('--spacing-xs', `${baseSpacing * 0.5}px`);
+        root.style.setProperty('--spacing-sm', `${baseSpacing}px`);
+        root.style.setProperty('--spacing-md', `${baseSpacing * 1.5}px`);
+        root.style.setProperty('--spacing-lg', `${baseSpacing * 2}px`);
+        root.style.setProperty('--spacing-xl', `${baseSpacing * 3}px`);
+        
+        // Dynamic font sizes
+        const baseFontSize = this.calculateBaseFontSize();
+        root.style.setProperty('--font-xs', `${baseFontSize * 0.75}px`);
+        root.style.setProperty('--font-sm', `${baseFontSize * 0.875}px`);
+        root.style.setProperty('--font-base', `${baseFontSize}px`);
+        root.style.setProperty('--font-lg', `${baseFontSize * 1.125}px`);
+        root.style.setProperty('--font-xl', `${baseFontSize * 1.25}px`);
+        root.style.setProperty('--font-2xl', `${baseFontSize * 1.5}px`);
+        root.style.setProperty('--font-3xl', `${baseFontSize * 2}px`);
+        
+        // Dynamic container padding
+        const containerPadding = this.calculateContainerPadding();
+        root.style.setProperty('--container-padding', `${containerPadding}px`);
+        
+        // Set data attributes for CSS targeting
+        root.setAttribute('data-size', sizeCategory);
+        root.setAttribute('data-notch', hasNotch);
+        root.setAttribute('data-orientation', this.viewport.orientation);
+    }
+
+    /**
+     * Calculate base spacing based on screen width
+     */
+    calculateBaseSpacing() {
+        const w = this.viewport.width;
+        if (w < this.breakpoints.xs) return 12;
+        if (w < this.breakpoints.sm) return 14;
+        if (w < this.breakpoints.md) return 16;
+        if (w < this.breakpoints.lg) return 18;
+        return 20;
+    }
+
+    /**
+     * Calculate base font size based on screen width
+     */
+    calculateBaseFontSize() {
+        const w = this.viewport.width;
+        if (w < this.breakpoints.xs) return 14;
+        if (w < this.breakpoints.sm) return 15;
+        if (w < this.breakpoints.md) return 16;
+        return 16;
+    }
+
+    /**
+     * Calculate container padding based on screen width
+     */
+    calculateContainerPadding() {
+        const w = this.viewport.width;
+        if (w < this.breakpoints.xs) return 16;
+        if (w < this.breakpoints.sm) return 18;
+        if (w < this.breakpoints.md) return 20;
+        return 20;
+    }
+
+    /**
+     * Adjust all elements dynamically
+     */
+    adjustAllElements() {
+        this.adjustPages();
+        this.adjustBalanceCard();
+        this.adjustTransactionItems();
+        this.adjustNavigation();
+        this.adjustFAB();
+        this.adjustModal();
+        this.adjustLockScreen();
+        this.adjustFormElements();
+        this.preventOverflow();
+    }
+
+    /**
+     * Adjust page containers
+     */
+    adjustPages() {
+        const pages = document.querySelectorAll('.page');
+        const { safeAreaInsets, height } = this.viewport;
+        const containerPadding = this.calculateContainerPadding();
+        
+        pages.forEach(page => {
+            // Set padding with safe areas
+            page.style.paddingTop = `${safeAreaInsets.top + 16}px`;
+            page.style.paddingLeft = `${Math.max(containerPadding, safeAreaInsets.left)}px`;
+            page.style.paddingRight = `${Math.max(containerPadding, safeAreaInsets.right)}px`;
+            
+            // Calculate bottom padding (nav + safe area + extra space)
+            const navHeight = 76; // Approximate nav height
+            page.style.paddingBottom = `${navHeight + safeAreaInsets.bottom + 24}px`;
+            
+            // Ensure max height to prevent overflow
+            page.style.maxHeight = `${height}px`;
+            page.style.overflowY = 'auto';
+            page.style.overflowX = 'hidden';
+        });
+    }
+
+    /**
+     * Adjust balance card for different screen sizes
+     */
+    adjustBalanceCard() {
+        const card = document.querySelector('.balance-card');
+        if (!card) return;
+        
+        const { width, sizeCategory } = this.viewport;
+        
+        // Adjust padding based on screen size
+        if (sizeCategory === 'xs') {
+            card.style.padding = '24px 20px';
+        } else if (sizeCategory === 'sm') {
+            card.style.padding = '26px 22px';
+        } else {
+            card.style.padding = '28px 24px';
+        }
+        
+        // Adjust balance font size
+        const balanceText = card.querySelector('[id*="Balance"]');
+        if (balanceText) {
+            if (width < this.breakpoints.sm) {
+                balanceText.style.fontSize = '38px';
+            } else if (width < this.breakpoints.md) {
+                balanceText.style.fontSize = '42px';
+            } else {
+                balanceText.style.fontSize = '44px';
+            }
+        }
+        
+        // Ensure card doesn't overflow
+        card.style.maxWidth = '100%';
+        card.style.overflow = 'hidden';
+    }
+
+    /**
+     * Adjust transaction items
+     */
+    adjustTransactionItems() {
+        const items = document.querySelectorAll('.transaction-item');
+        const { sizeCategory } = this.viewport;
+        
+        items.forEach(item => {
+            // Adjust padding
+            if (sizeCategory === 'xs') {
+                item.style.padding = '14px';
+            } else {
+                item.style.padding = '16px';
+            }
+            
+            // Ensure proper text truncation
+            const descriptionEl = item.querySelector('div[style*="text-overflow"]');
+            if (descriptionEl) {
+                descriptionEl.style.maxWidth = '100%';
+                descriptionEl.style.overflow = 'hidden';
+                descriptionEl.style.textOverflow = 'ellipsis';
+                descriptionEl.style.whiteSpace = 'nowrap';
+            }
+            
+            // Adjust icon size
+            const icon = item.querySelector('.trans-icon');
+            if (icon) {
+                if (sizeCategory === 'xs') {
+                    icon.style.width = '44px';
+                    icon.style.height = '44px';
+                } else {
+                    icon.style.width = '48px';
+                    icon.style.height = '48px';
+                }
+            }
+        });
+    }
+
+    /**
+     * Adjust bottom navigation
+     */
+    adjustNavigation() {
+        const nav = document.querySelector('.bottom-nav');
+        if (!nav) return;
+        
+        const { safeAreaInsets, width } = this.viewport;
+        
+        // Adjust bottom padding for safe area
+        nav.style.paddingBottom = `${Math.max(20, safeAreaInsets.bottom + 8)}px`;
+        nav.style.paddingLeft = `${Math.max(20, safeAreaInsets.left)}px`;
+        nav.style.paddingRight = `${Math.max(20, safeAreaInsets.right)}px`;
+        
+        // Adjust nav item size based on screen width
+        const navItems = nav.querySelectorAll('.nav-item');
+        navItems.forEach(item => {
+            if (width < this.breakpoints.sm) {
+                item.style.padding = '8px 12px';
+            } else {
+                item.style.padding = '8px 20px';
+            }
+        });
+        
+        // Ensure nav is always visible
+        nav.style.position = 'fixed';
+        nav.style.bottom = '0';
+        nav.style.left = '50%';
+        nav.style.transform = 'translateX(-50%)';
+        nav.style.zIndex = '100';
+    }
+
+    /**
+     * Adjust FAB position
+     */
+    adjustFAB() {
+        const fab = document.querySelector('.fab');
+        if (!fab) return;
+        
+        const { safeAreaInsets, width } = this.viewport;
+        
+        // Position FAB with safe areas
+        const navHeight = 76 + safeAreaInsets.bottom;
+        fab.style.bottom = `${navHeight + 20}px`;
+        fab.style.right = `${Math.max(24, safeAreaInsets.right + 16)}px`;
+        
+        // Adjust FAB size for small screens
+        if (width < this.breakpoints.sm) {
+            fab.style.width = '52px';
+            fab.style.height = '52px';
+        } else {
+            fab.style.width = '56px';
+            fab.style.height = '56px';
+        }
+    }
+
+    /**
+     * Adjust modal sheet
+     */
+    adjustModal() {
+        const modal = document.querySelector('.modal-content');
+        if (!modal) return;
+        
+        const { height, safeAreaInsets } = this.viewport;
+        
+        // Set max height accounting for safe areas
+        modal.style.maxHeight = `${height - safeAreaInsets.top - 40}px`;
+        modal.style.paddingBottom = `${Math.max(24, safeAreaInsets.bottom + 16)}px`;
+        
+        // Ensure proper scrolling
+        modal.style.overflowY = 'auto';
+        modal.style.overflowX = 'hidden';
+    }
+
+    /**
+     * Adjust lock screen
+     */
+    adjustLockScreen() {
+        const lockScreen = document.querySelector('.lock-screen');
+        if (!lockScreen) return;
+        
+        const { height, safeAreaInsets, sizeCategory } = this.viewport;
+        
+        // Adjust padding
+        lockScreen.style.paddingTop = `${safeAreaInsets.top + 32}px`;
+        lockScreen.style.paddingBottom = `${safeAreaInsets.bottom + 32}px`;
+        
+        // Adjust numpad size for small screens
+        const numpad = lockScreen.querySelector('.numpad');
+        if (numpad && sizeCategory === 'xs') {
+            numpad.style.maxWidth = '240px';
+            const keys = numpad.querySelectorAll('.numpad-key');
+            keys.forEach(key => {
+                key.style.fontSize = '20px';
+            });
+        }
+    }
+
+    /**
+     * Adjust form elements
+     */
+    adjustFormElements() {
+        const inputs = document.querySelectorAll('.form-field, input, select, textarea');
+        const { sizeCategory } = this.viewport;
+        
+        inputs.forEach(input => {
+            // Adjust padding for small screens
+            if (sizeCategory === 'xs') {
+                input.style.padding = '12px 14px';
+                input.style.fontSize = '14px';
+            } else {
+                input.style.padding = '14px 16px';
+                input.style.fontSize = '15px';
+            }
+            
+            // Prevent zoom on focus (iOS)
+            if (parseFloat(input.style.fontSize) < 16) {
+                input.style.fontSize = '16px';
+            }
+        });
+    }
+
+    /**
+     * Prevent overflow on all containers
+     */
+    preventOverflow() {
+        const { width } = this.viewport;
+        
+        // Apply to all major containers
+        const containers = document.querySelectorAll('.app, .page, .card, .box, .transaction-item, .settings-item');
+        
+        containers.forEach(container => {
+            container.style.maxWidth = '100%';
+            container.style.boxSizing = 'border-box';
+            container.style.overflowX = 'hidden';
+            
+            // Ensure word wrapping
+            const textElements = container.querySelectorAll('p, span, div');
+            textElements.forEach(el => {
+                if (!el.style.whiteSpace || el.style.whiteSpace !== 'nowrap') {
+                    el.style.wordWrap = 'break-word';
+                    el.style.overflowWrap = 'break-word';
+                }
+            });
+        });
+        
+        // Ensure app container fits
+        const app = document.querySelector('.app');
+        if (app) {
+            app.style.maxWidth = width < 480 ? '100%' : '480px';
+            app.style.width = '100%';
+            app.style.margin = '0 auto';
+        }
+    }
+
+    /**
+     * Setup event listeners for dynamic adjustments
+     */
+    setupEventListeners() {
+        // Debounce function
+        let resizeTimer;
+        const debounce = (func, delay) => {
+            return function() {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(func, delay);
+            };
+        };
+        
+        // Handle resize
+        window.addEventListener('resize', debounce(() => {
+            this.detectViewport();
+            this.applyResponsiveStyles();
+            this.adjustAllElements();
+            console.log('📐 Viewport Resized');
+        }, 200));
+        
+        // Handle orientation change
+        window.addEventListener('orientationchange', () => {
+            setTimeout(() => {
+                this.detectViewport();
+                this.applyResponsiveStyles();
+                this.adjustAllElements();
+                console.log('🔄 Orientation Changed');
+            }, 100);
+        });
+        
+        // Handle viewport resize (mobile address bar show/hide)
+        if ('visualViewport' in window) {
+            window.visualViewport.addEventListener('resize', debounce(() => {
+                this.handleVisualViewportChange();
+            }, 100));
+        }
+        
+        // Handle scroll to adjust for URL bar
+        let lastScrollTop = 0;
+        window.addEventListener('scroll', debounce(() => {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            if (Math.abs(scrollTop - lastScrollTop) > 50) {
+                this.adjustForURLBar();
+                lastScrollTop = scrollTop;
+            }
+        }, 100));
+    }
+
+    /**
+     * Handle visual viewport changes (iOS Safari)
+     */
+    handleVisualViewportChange() {
+        if (!window.visualViewport) return;
+        
+        const visualHeight = window.visualViewport.height;
+        const layoutHeight = document.documentElement.clientHeight;
+        
+        // Detect keyboard
+        const keyboardVisible = visualHeight < layoutHeight * 0.75;
+        
+        if (keyboardVisible) {
+            // Adjust for keyboard
+            const modal = document.querySelector('.modal-content');
+            if (modal) {
+                modal.style.maxHeight = `${visualHeight - 80}px`;
+            }
+        } else {
+            // Reset
+            this.adjustModal();
+        }
+    }
+
+    /**
+     * Adjust for URL bar show/hide
+     */
+    adjustForURLBar() {
+        const currentHeight = window.innerHeight;
+        if (Math.abs(currentHeight - this.viewport.height) > 50) {
+            this.viewport.height = currentHeight;
+            document.documentElement.style.setProperty('--vh-real', `${currentHeight}px`);
+        }
+    }
+
+    /**
+     * Get current viewport info
+     */
+    getViewportInfo() {
+        return this.viewport;
+    }
+
+    /**
+     * Manually trigger adjustment
+     */
+    refresh() {
+        this.detectViewport();
+        this.applyResponsiveStyles();
+        this.adjustAllElements();
+        console.log('🔄 Viewport Manager Refreshed');
+    }
+}
+
+// Initialize the viewport manager
+let viewportManager;
+
+// Add to your existing init function or create new one
+function initViewportManager() {
+    viewportManager = new MobileViewportManager();
+    
+    // Make it globally accessible
+    window.viewportManager = viewportManager;
+    
+    console.log('✅ Mobile Viewport Manager Initialized');
+    console.log('📱 Device Info:', viewportManager.getViewportInfo());
+}
+
+// Call after DOM is loaded
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initViewportManager);
+} else {
+    initViewportManager();
+}
+
+// Add CSS for responsive utilities
+const responsiveStyles = document.createElement('style');
+responsiveStyles.textContent = `
+    /* Responsive utility classes */
+    .responsive-text {
+        font-size: clamp(14px, calc(var(--font-base) * 1px), 18px);
+    }
+    
+    .responsive-padding {
+        padding: var(--container-padding);
+    }
+    
+    .safe-area-top {
+        padding-top: calc(var(--sat) + 16px);
+    }
+    
+    .safe-area-bottom {
+        padding-bottom: calc(var(--sab) + 16px);
+    }
+    
+    /* Prevent overflow globally */
+    * {
+        box-sizing: border-box;
+    }
+    
+    img, video {
+        max-width: 100%;
+        height: auto;
+    }
+    
+    /* Ensure scrollable containers */
+    .page {
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
+    }
+    
+    /* Size-specific adjustments */
+    [data-size="xs"] .balance-card {
+        padding: 24px 18px !important;
+    }
+    
+    [data-size="xs"] .heading {
+        font-size: 18px !important;
+    }
+    
+    [data-size="xs"] .transaction-item {
+        padding: 12px !important;
+    }
+    
+    /* Notch adjustments */
+    [data-notch="true"] .lock-screen {
+        padding-top: calc(var(--sat) + 40px) !important;
+    }
+    
+    /* Landscape optimizations */
+    [data-orientation="landscape"] .page {
+        padding-bottom: 100px !important;
+    }
+    
+    /* Touch-friendly spacing */
+    @media (hover: none) and (pointer: coarse) {
+        button, a, .clickable {
+            min-height: 44px;
+            min-width: 44px;
+        }
+    }
+`;
+
+document.head.appendChild(responsiveStyles);
+
+    </script>
+</body>
+</html>
