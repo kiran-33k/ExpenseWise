@@ -1,16 +1,16 @@
-https://kiran-33k.github.io/ExpenseWise/<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="theme-color" content="#5b7dff">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="ExpenseWise">
-    <link rel="manifest" href="manifest.json">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💰</text></svg>">
-    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💰</text></svg>">
     <title>ExpenseWise</title>
+    
+    <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💰</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%235b7dff' width='180' height='180' rx='40'/><text x='90' y='130' font-size='100' text-anchor='middle'>💰</text></svg>">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
@@ -997,6 +997,11 @@ https://kiran-33k.github.io/ExpenseWise/<!DOCTYPE html>
             font-weight: 700;
             cursor: pointer;
             font-size: 13px;
+            touch-action: manipulation;
+        }
+
+        .install-btn:active {
+            transform: scale(0.95);
         }
     </style>
 </head>
@@ -1330,12 +1335,136 @@ https://kiran-33k.github.io/ExpenseWise/<!DOCTYPE html>
     <div id="alertContainer"></div>
 
     <script>
+        // PWA Setup - Inline Manifest and Service Worker
+        const manifestData = {
+            "name": "ExpenseWise - Personal Finance Tracker",
+            "short_name": "ExpenseWise",
+            "description": "Track your expenses and manage finances easily",
+            "start_url": "./",
+            "display": "standalone",
+            "background_color": "#fafbfc",
+            "theme_color": "#5b7dff",
+            "orientation": "portrait-primary",
+            "icons": [
+                {
+                    "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect fill='%235b7dff' width='192' height='192' rx='48'/%3E%3Ctext x='96' y='140' font-size='100' text-anchor='middle' fill='white'%3E💰%3C/text%3E%3C/svg%3E",
+                    "sizes": "192x192",
+                    "type": "image/svg+xml",
+                    "purpose": "any"
+                },
+                {
+                    "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect fill='%235b7dff' width='512' height='512' rx='128'/%3E%3Ctext x='256' y='380' font-size='320' text-anchor='middle' fill='white'%3E💰%3C/text%3E%3C/svg%3E",
+                    "sizes": "512x512",
+                    "type": "image/svg+xml",
+                    "purpose": "any maskable"
+                }
+            ]
+        };
+
+        const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: 'application/json' });
+        const manifestURL = URL.createObjectURL(manifestBlob);
+        const manifestLink = document.createElement('link');
+        manifestLink.rel = 'manifest';
+        manifestLink.href = manifestURL;
+        document.head.appendChild(manifestLink);
+
+        if ('serviceWorker' in navigator) {
+            const swCode = `
+                const CACHE_NAME = 'expensewise-v1';
+                
+                self.addEventListener('install', (event) => {
+                    event.waitUntil(
+                        caches.open(CACHE_NAME).then((cache) => {
+                            return cache.addAll(['./', './index.html']);
+                        })
+                    );
+                    self.skipWaiting();
+                });
+
+                self.addEventListener('fetch', (event) => {
+                    event.respondWith(
+                        caches.match(event.request).then((response) => {
+                            return response || fetch(event.request);
+                        })
+                    );
+                });
+
+                self.addEventListener('activate', (event) => {
+                    event.waitUntil(
+                        caches.keys().then((cacheNames) => {
+                            return Promise.all(
+                                cacheNames.map((cacheName) => {
+                                    if (cacheName !== CACHE_NAME) {
+                                        return caches.delete(cacheName);
+                                    }
+                                })
+                            );
+                        })
+                    );
+                    return self.clients.claim();
+                });
+            `;
+
+            const swBlob = new Blob([swCode], { type: 'application/javascript' });
+            const swURL = URL.createObjectURL(swBlob);
+
+            navigator.serviceWorker.register(swURL).then((registration) => {
+                console.log('Service Worker registered');
+            }).catch((error) => {
+                console.log('Service Worker registration failed:', error);
+            });
+        }
+
+        let deferredPrompt;
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            setTimeout(() => {
+                document.getElementById('installBanner').classList.add('show');
+            }, 2000);
+        });
+
+        function installApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        showAlert('success', 'Installed!', 'ExpenseWise has been added to your home screen.');
+                    }
+                    deferredPrompt = null;
+                    document.getElementById('installBanner').classList.remove('show');
+                });
+            } else {
+                showAlert('info', 'Install App', 'To install on iOS: Tap Share button → Add to Home Screen');
+            }
+        }
+
+        window.addEventListener('appinstalled', () => {
+            document.getElementById('installBanner').classList.remove('show');
+        });
+
+        function isIOS() {
+            return /iPhone|iPad|iPod/.test(navigator.userAgent) && !window.MSStream;
+        }
+
+        function isInStandaloneMode() {
+            return (window.matchMedia('(display-mode: standalone)').matches) || 
+                   (window.navigator.standalone) || 
+                   document.referrer.includes('android-app://');
+        }
+
+        if (isIOS() && !isInStandaloneMode()) {
+            setTimeout(() => {
+                document.getElementById('installBanner').classList.add('show');
+            }, 3000);
+        }
+
+        // App Variables
         let pin='',isSet=false,storedPin='',currentPage='home',transType='income',transactions=[],darkMode=false;
         let searchQuery='',filterType='all';
         let swipeStartX=0,swipeCurrentX=0,swipeElement=null,isSwiping=false;
-        let deferredPrompt;
 
-        // Categories based on transaction type
         const categories = {
             income: [
                 { value: 'Salary', label: '💰 Salary', icon: '💰' },
@@ -1355,32 +1484,6 @@ https://kiran-33k.github.io/ExpenseWise/<!DOCTYPE html>
             ]
         };
 
-        // PWA Install
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            document.getElementById('installBanner').classList.add('show');
-        });
-
-        function installApp() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then((choiceResult) => {
-                    if (choiceResult.outcome === 'accepted') {
-                        console.log('App installed');
-                    }
-                    deferredPrompt = null;
-                    document.getElementById('installBanner').classList.remove('show');
-                });
-            }
-        }
-
-        // Register Service Worker
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js').catch(() => {});
-        }
-
-        // Alert/Popup Functions
         function showAlert(type, title, message, onConfirm, showCancel = false) {
             const alertContainer = document.getElementById('alertContainer');
             
@@ -1414,8 +1517,7 @@ https://kiran-33k.github.io/ExpenseWise/<!DOCTYPE html>
         }
 
         function closeAlert() {
-            const alertContainer = document.getElementById('alertContainer');
-            alertContainer.innerHTML = '';
+            document.getElementById('alertContainer').innerHTML = '';
             window.alertConfirmCallback = null;
         }
 
@@ -1426,10 +1528,8 @@ https://kiran-33k.github.io/ExpenseWise/<!DOCTYPE html>
             closeAlert();
         }
 
-        // Filter Dropdown
         function toggleFilterDropdown() {
-            const dropdown = document.getElementById('filterDropdown');
-            dropdown.classList.toggle('show');
+            document.getElementById('filterDropdown').classList.toggle('show');
         }
 
         function selectFilter(type) {
@@ -1456,7 +1556,6 @@ https://kiran-33k.github.io/ExpenseWise/<!DOCTYPE html>
             loadAllTransactions();
         }
 
-        // Close dropdown when clicking outside
         document.addEventListener('click', (e) => {
             const dropdown = document.getElementById('filterDropdown');
             const filterBtn = document.getElementById('filterBtn');
@@ -1465,7 +1564,6 @@ https://kiran-33k.github.io/ExpenseWise/<!DOCTYPE html>
             }
         });
 
-        // Debounced Search
         let searchTimeout;
         function searchTransactions() {
             clearTimeout(searchTimeout);
@@ -1494,7 +1592,6 @@ https://kiran-33k.github.io/ExpenseWise/<!DOCTYPE html>
             return filtered;
         }
 
-        // Optimized Swipe Functions with RAF
         function initSwipe() {
             const container = document.getElementById('allTrans');
             
@@ -1862,7 +1959,6 @@ https://kiran-33k.github.io/ExpenseWise/<!DOCTYPE html>
                 return;
             }
             
-            // Use DocumentFragment for better performance
             const fragment = document.createDocumentFragment();
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = filtered.map(t=>createSwipeableTransaction(t)).join('');
