@@ -25,11 +25,13 @@
             box-sizing: border-box;
         }
 
-        body {
+        html, body {
             overflow-x: hidden;
             background: var(--bg);
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            width: 100%;
+            height: 100%;
         }
 
         .app {
@@ -75,7 +77,6 @@
                         color 0.2s ease,
                         transform 0.15s ease,
                         opacity 0.2s ease;
-            will-change: transform;
         }
 
         /* Hardware Acceleration */
@@ -101,10 +102,15 @@
             to { transform: translate3d(0, 0, 0); }
         }
 
+        @keyframes slideDown {
+            from { transform: translate3d(0, 0, 0); }
+            to { transform: translate3d(0, 100%, 0); }
+        }
+
         @keyframes shake {
             0%, 100% { transform: translate3d(0, 0, 0); }
-            33% { transform: translate3d(-8px, 0, 0); }
-            66% { transform: translate3d(8px, 0, 0); }
+            25% { transform: translate3d(-10px, 0, 0); }
+            75% { transform: translate3d(10px, 0, 0); }
         }
 
         @keyframes popIn {
@@ -113,88 +119,119 @@
             100% { transform: scale3d(1, 1, 1); opacity: 1; }
         }
 
+        @keyframes fadeInOverlay {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
         .animate-in {
             animation: fadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .slide-up {
-            animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: slideUp 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .slide-down {
+            animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.6, 1);
         }
 
         .pop-in {
             animation: popIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Lock Screen */
+        .fade-in-overlay {
+            animation: fadeInOverlay 0.3s ease;
+        }
+
+        /* Lock Screen - FIXED LAYOUT */
         .lock-screen {
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 32px;
+            padding: 40px 24px;
             background: var(--bg);
         }
 
         .lock-content {
             width: 100%;
-            max-width: 340px;
+            max-width: 360px;
             text-align: center;
         }
 
         .lock-icon-wrap {
-            width: 72px;
-            height: 72px;
-            border-radius: 20px;
+            width: 88px;
+            height: 88px;
+            border-radius: 24px;
             background: var(--accent);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 36px;
-            box-shadow: 0 8px 24px rgba(91, 125, 255, 0.24);
+            margin: 0 auto 32px;
+            box-shadow: 0 12px 32px rgba(91, 125, 255, 0.3);
+        }
+
+        .lock-title {
+            font-size: 32px;
+            font-weight: 900;
+            color: var(--text);
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        .lock-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 48px;
+            font-size: 16px;
+            font-weight: 500;
+            line-height: 1.5;
         }
 
         .pin-dots {
             display: flex;
-            gap: 12px;
+            gap: 16px;
             justify-content: center;
-            margin-bottom: 44px;
+            margin-bottom: 56px;
         }
 
         .pin-dot {
-            width: 12px;
-            height: 12px;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
             background: var(--divider);
-            transition: all 0.2s ease;
+            transition: all 0.25s ease;
         }
 
         .pin-dot.filled {
             background: var(--accent);
-            transform: scale(1.3);
+            transform: scale(1.4);
+            box-shadow: 0 0 12px rgba(91, 125, 255, 0.4);
         }
 
         .numpad {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            max-width: 280px;
+            gap: 14px;
+            max-width: 300px;
             margin: 0 auto;
         }
 
         .numpad-key {
             aspect-ratio: 1;
-            border-radius: 12px;
+            border-radius: 16px;
             background: var(--surface);
             border: 2px solid var(--divider);
             color: var(--text);
-            font-size: 24px;
-            font-weight: 600;
+            font-size: 26px;
+            font-weight: 700;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             user-select: none;
             touch-action: manipulation;
+            box-shadow: 0 2px 8px var(--shadow);
         }
 
         .numpad-key:hover {
@@ -211,6 +248,7 @@
             background: var(--accent);
             color: white;
             border-color: var(--accent);
+            box-shadow: 0 4px 16px rgba(91, 125, 255, 0.3);
         }
 
         .numpad-key.primary:hover {
@@ -660,20 +698,15 @@
         }
 
         /* Modal */
-        /* Modal */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(8px);
-    display: flex;
-    align-items: flex-end;
-    z-index: 200;
-}
-
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: flex-end;
+            z-index: 200;
+        }
 
         .modal-content {
             background: var(--bg);
@@ -686,35 +719,142 @@
             overflow-y: auto;
         }
 
-        /* Alert/Popup */
-        /* Alert/Popup */
-.alert-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(8px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 999999;
-    padding: 20px;
-}
+        /* PIN Change Modal - PERFECT HALF PAGE WITH THEME SUPPORT */
+        .pin-change-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(12px);
+            display: none;
+            align-items: flex-end;
+            justify-content: center;
+            z-index: 250;
+            padding: 0;
+        }
 
-.alert-box {
-    background: var(--surface);
-    border-radius: 20px;
-    padding: 28px 24px;
-    max-width: 320px;
-    width: 100%;
-    text-align: center;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    position: relative;
-    z-index: 1000000;
-}
+        .pin-change-overlay.show {
+            display: flex;
+        }
 
+        .pin-change-sheet {
+            background: var(--bg);
+            width: 100%;
+            max-width: 480px;
+            border-radius: 28px 28px 0 0;
+            padding: 0;
+            max-height: 70vh;
+            overflow: hidden;
+            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .pin-change-handle {
+            width: 40px;
+            height: 5px;
+            background: var(--divider);
+            border-radius: 3px;
+            margin: 12px auto 20px;
+        }
+
+        .pin-change-header {
+            padding: 0 24px 20px;
+            border-bottom: 1px solid var(--divider);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .pin-change-close {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--surface);
+            border: 1px solid var(--divider);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text);
+            touch-action: manipulation;
+            flex-shrink: 0;
+        }
+
+        .pin-change-close:active {
+            transform: scale(0.9);
+            background: var(--hover);
+        }
+
+        .pin-change-body {
+            padding: 28px 24px 32px;
+            overflow-y: auto;
+            max-height: calc(70vh - 100px);
+        }
+
+        .pin-stage-progress {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 28px;
+        }
+
+        .stage-line {
+            height: 3px;
+            width: 40px;
+            background: var(--divider);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .stage-line.active {
+            background: var(--accent);
+            width: 60px;
+        }
+
+        .pin-change-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(91, 125, 255, 0.15), rgba(155, 109, 255, 0.15));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+            transition: all 0.3s ease;
+        }
+
+        .pin-change-icon.success {
+            background: linear-gradient(135deg, rgba(0, 186, 136, 0.15), rgba(0, 217, 165, 0.15));
+        }
+
+        /* Alert/Popup - FIXED POSITIONING */
+        .alert-overlay {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            z-index: 999999 !important;
+            padding: 20px;
+        }
+
+        .alert-box {
+            background: var(--surface);
+            border-radius: 20px;
+            padding: 28px 24px;
+            max-width: 320px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1000000;
+        }
 
         .alert-icon {
             width: 56px;
@@ -1019,15 +1159,15 @@
 </head>
 <body>
     <div class="app" id="app">
-        <!-- Lock Screen -->
+        <!-- Lock Screen - FIXED LAYOUT -->
         <div id="lockPage" class="page active lock-screen">
             <div class="lock-content animate-in">
                 <div class="lock-icon-wrap">
-                    <span class="material-symbols-rounded" style="font-size: 40px; color: white;">lock</span>
+                    <span class="material-symbols-rounded" style="font-size: 48px; color: white;">lock</span>
                 </div>
                 
-                <h1 id="lockTitle" style="font-size: 28px; font-weight: 800; margin-bottom: 8px; color: var(--text);">Enter PIN</h1>
-                <p id="lockSubtitle" style="color: var(--text-secondary); margin-bottom: 44px; font-size: 15px; font-weight: 500;">Enter your 4-digit security PIN</p>
+                <h1 class="lock-title" id="lockTitle">Enter PIN</h1>
+                <p class="lock-subtitle" id="lockSubtitle">Enter your 4-digit security PIN</p>
                 
                 <div class="pin-dots">
                     <div class="pin-dot" id="dot1"></div>
@@ -1047,11 +1187,11 @@
                     <button class="numpad-key" onclick="pinAdd('8')">8</button>
                     <button class="numpad-key" onclick="pinAdd('9')">9</button>
                     <button class="numpad-key" onclick="pinDel()">
-                        <span class="material-symbols-rounded" style="font-size: 24px;">backspace</span>
+                        <span class="material-symbols-rounded" style="font-size: 26px;">backspace</span>
                     </button>
                     <button class="numpad-key" onclick="pinAdd('0')">0</button>
                     <button class="numpad-key primary" onclick="pinSubmit()">
-                        <span class="material-symbols-rounded" style="font-size: 24px;">check</span>
+                        <span class="material-symbols-rounded" style="font-size: 26px;">check</span>
                     </button>
                 </div>
             </div>
@@ -1228,7 +1368,7 @@
                 <span class="material-symbols-rounded" style="color: var(--text-tertiary); font-size: 20px;">chevron_right</span>
             </div>
 
-            <div class="settings-item" onclick="changePinCode()">
+            <div class="settings-item" onclick="openChangePinModal()">
                 <div style="width: 48px; height: 48px; border-radius: 12px; background: var(--bg); display: flex; align-items: center; justify-content: center;">
                     <span class="material-symbols-rounded" style="font-size: 24px; color: var(--text);">password</span>
                 </div>
@@ -1343,11 +1483,71 @@
         </div>
     </div>
 
-    <!-- Alert/Popup Container -->
+    <!-- Perfect Half-Page PIN Change Modal with Theme & Close Button -->
+    <div class="pin-change-overlay fade-in-overlay" id="pinChangeOverlay" onclick="closeChangePinModal(event)">
+        <div class="pin-change-sheet slide-up" onclick="event.stopPropagation()">
+            <div class="pin-change-handle"></div>
+            
+            <div class="pin-change-header">
+                <h2 style="font-size: 22px; font-weight: 900; color: var(--text);" id="pinChangeTitle">Verify Current PIN</h2>
+                <div class="pin-change-close" onclick="closeChangePinModal()">
+                    <span class="material-symbols-rounded" style="font-size: 20px;">close</span>
+                </div>
+            </div>
+
+            <div class="pin-change-body">
+                <!-- Progress Indicator -->
+                <div class="pin-stage-progress">
+                    <div class="stage-line active" id="stageLine1"></div>
+                    <div class="stage-line" id="stageLine2"></div>
+                </div>
+
+                <!-- Icon -->
+                <div class="pin-change-icon" id="pinChangeIcon">
+                    <span class="material-symbols-rounded" style="font-size: 44px; color: var(--accent);" id="pinChangeIconSymbol">lock_open</span>
+                </div>
+
+                <!-- Description -->
+                <div style="text-align: center; margin-bottom: 32px;">
+                    <p id="pinChangeSubtitle" style="color: var(--text-secondary); font-size: 15px; font-weight: 500; line-height: 1.6;">Enter your current 4-digit security PIN to continue</p>
+                </div>
+
+                <!-- PIN Dots -->
+                <div class="pin-dots" style="margin-bottom: 36px;">
+                    <div class="pin-dot" id="changeDot1"></div>
+                    <div class="pin-dot" id="changeDot2"></div>
+                    <div class="pin-dot" id="changeDot3"></div>
+                    <div class="pin-dot" id="changeDot4"></div>
+                </div>
+
+                <!-- Numpad -->
+                <div class="numpad" style="max-width: 260px;">
+                    <button class="numpad-key" onclick="changePinAdd('1')">1</button>
+                    <button class="numpad-key" onclick="changePinAdd('2')">2</button>
+                    <button class="numpad-key" onclick="changePinAdd('3')">3</button>
+                    <button class="numpad-key" onclick="changePinAdd('4')">4</button>
+                    <button class="numpad-key" onclick="changePinAdd('5')">5</button>
+                    <button class="numpad-key" onclick="changePinAdd('6')">6</button>
+                    <button class="numpad-key" onclick="changePinAdd('7')">7</button>
+                    <button class="numpad-key" onclick="changePinAdd('8')">8</button>
+                    <button class="numpad-key" onclick="changePinAdd('9')">9</button>
+                    <button class="numpad-key" onclick="changePinDel()">
+                        <span class="material-symbols-rounded" style="font-size: 22px;">backspace</span>
+                    </button>
+                    <button class="numpad-key" onclick="changePinAdd('0')">0</button>
+                    <button class="numpad-key primary" onclick="changePinSubmit()">
+                        <span class="material-symbols-rounded" style="font-size: 22px;">check</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert/Popup Container - OUTSIDE APP DIV -->
     <div id="alertContainer"></div>
 
     <script>
-        // PWA Setup - Inline Manifest and Service Worker
+        // PWA Setup
         const manifestData = {
             "name": "ExpenseWise - Personal Finance Tracker",
             "short_name": "ExpenseWise",
@@ -1477,6 +1677,9 @@
         let searchQuery='',filterType='all';
         let swipeStartX=0,swipeCurrentX=0,swipeElement=null,isSwiping=false;
 
+        // PIN Change Variables
+        let changePinTemp='',changePinStage=1;
+
         const categories = {
             income: [
                 { value: 'Salary', label: '💰 Salary', icon: '💰' },
@@ -1496,6 +1699,102 @@
             ]
         };
 
+        // Perfect PIN Change Modal Functions
+        function openChangePinModal() {
+            const overlay = document.getElementById('pinChangeOverlay');
+            overlay.classList.add('show');
+            changePinTemp = '';
+            changePinStage = 1;
+            updateChangePinDots();
+            updateChangePinUI();
+        }
+
+        function closeChangePinModal(e) {
+            if (!e || e.target.classList.contains('pin-change-overlay') || e.target.classList.contains('pin-change-close') || e.target.closest('.pin-change-close')) {
+                const overlay = document.getElementById('pinChangeOverlay');
+                const sheet = overlay.querySelector('.pin-change-sheet');
+                
+                sheet.classList.remove('slide-up');
+                sheet.classList.add('slide-down');
+                
+                setTimeout(() => {
+                    overlay.classList.remove('show');
+                    sheet.classList.remove('slide-down');
+                    sheet.classList.add('slide-up');
+                    changePinTemp = '';
+                    changePinStage = 1;
+                }, 300);
+            }
+        }
+
+        function changePinAdd(d) {
+            if (changePinTemp.length < 4) {
+                changePinTemp += d;
+                updateChangePinDots();
+                if (changePinTemp.length === 4) setTimeout(changePinSubmit, 250);
+            }
+        }
+
+        function changePinDel() {
+            if (changePinTemp.length) {
+                changePinTemp = changePinTemp.slice(0, -1);
+                updateChangePinDots();
+            }
+        }
+
+        function updateChangePinDots() {
+            for (let i = 1; i <= 4; i++) {
+                document.getElementById('changeDot' + i).classList.toggle('filled', i <= changePinTemp.length);
+            }
+        }
+
+        function changePinSubmit() {
+            if (changePinTemp.length !== 4) return;
+
+            if (changePinStage === 1) {
+                // Verify old PIN
+                if (changePinTemp === storedPin) {
+                    changePinStage = 2;
+                    changePinTemp = '';
+                    updateChangePinDots();
+                    updateChangePinUI();
+                } else {
+                    // Shake animation
+                    document.querySelectorAll('#pinChangeOverlay .pin-dot').forEach(d => {
+                        d.style.animation = 'shake 0.4s ease';
+                        setTimeout(() => d.style.animation = '', 400);
+                    });
+                    changePinTemp = '';
+                    updateChangePinDots();
+                    showAlert('error', 'Incorrect PIN', 'The current PIN you entered is incorrect. Please try again.');
+                }
+            } else if (changePinStage === 2) {
+                // Set new PIN
+                localStorage.setItem('expenseWisePin', changePinTemp);
+                storedPin = changePinTemp;
+                closeChangePinModal();
+                showAlert('success', 'PIN Updated', 'Your security PIN has been changed successfully!');
+            }
+        }
+
+        function updateChangePinUI() {
+            if (changePinStage === 1) {
+                document.getElementById('pinChangeTitle').textContent = 'Verify Current PIN';
+                document.getElementById('pinChangeSubtitle').textContent = 'Enter your current 4-digit security PIN to continue';
+                document.getElementById('pinChangeIconSymbol').textContent = 'lock_open';
+                document.getElementById('pinChangeIcon').classList.remove('success');
+                document.getElementById('stageLine1').classList.add('active');
+                document.getElementById('stageLine2').classList.remove('active');
+            } else {
+                document.getElementById('pinChangeTitle').textContent = 'Set New PIN';
+                document.getElementById('pinChangeSubtitle').textContent = 'Create your new 4-digit security PIN';
+                document.getElementById('pinChangeIconSymbol').textContent = 'lock_reset';
+                document.getElementById('pinChangeIcon').classList.add('success');
+                document.getElementById('stageLine1').classList.remove('active');
+                document.getElementById('stageLine2').classList.add('active');
+            }
+        }
+
         function showAlert(type, title, message, onConfirm, showCancel = false) {
             const alertContainer = document.getElementById('alertContainer');
             
@@ -1509,7 +1808,7 @@
             const { icon, class: iconClass } = iconMap[type] || iconMap.error;
 
             const alertHTML = `
-                <div class="alert-overlay pop-in" id="alertOverlay">
+                <div class="alert-overlay pop-in">
                     <div class="alert-box pop-in">
                         <div class="alert-icon ${iconClass}">
                             <span class="material-symbols-rounded" style="font-size: 32px;">${icon}</span>
@@ -1737,8 +2036,8 @@
             document.getElementById('app').classList.add('locked');
             if(!storedPin){
                 isSet=true;
-                document.getElementById('lockTitle').textContent='Create PIN';
-                document.getElementById('lockSubtitle').textContent='Set your 4-digit security PIN';
+                document.querySelector('.lock-title').textContent='Create PIN';
+                document.querySelector('.lock-subtitle').textContent='Set your 4-digit security PIN';
             }
             document.getElementById('transDate').value=new Date().toISOString().split('T')[0];
             updateCategoryOptions();
@@ -1813,8 +2112,8 @@
         function lockApp(){
             document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
             document.getElementById('lockPage').classList.add('active');
-            document.getElementById('lockTitle').textContent='Enter PIN';
-            document.getElementById('lockSubtitle').textContent='Enter your 4-digit security PIN';
+            document.querySelector('.lock-title').textContent='Enter PIN';
+            document.querySelector('.lock-subtitle').textContent='Enter your 4-digit security PIN';
             pin='';
             updatePinDots();
             document.getElementById('app').classList.add('locked');
@@ -2095,26 +2394,6 @@
                 document.getElementById('expenseBar').style.height = expenseHeight + '%';
                 document.getElementById('incomeBarValue').textContent = '₹' + income.toFixed(0);
                 document.getElementById('expenseBarValue').textContent = '₹' + expense.toFixed(0);
-            });
-        }
-
-        function changePinCode(){
-            showAlert('info', 'Verify Identity', 'Enter your current PIN to continue:', () => {
-                const oldPin = prompt('Enter your current PIN:');
-                if(!oldPin) return;
-                
-                if(oldPin === storedPin){
-                    const newPin = prompt('Enter new 4-digit PIN:');
-                    if(newPin && newPin.length===4 && /^\d+$/.test(newPin)){
-                        localStorage.setItem('expenseWisePin', newPin);
-                        storedPin = newPin;
-                        showAlert('success', 'PIN Updated', 'Your security PIN has been changed successfully!');
-                    } else if(newPin) {
-                        showAlert('error', 'Invalid PIN', 'PIN must be exactly 4 digits.');
-                    }
-                } else {
-                    showAlert('error', 'Incorrect PIN', 'The current PIN you entered is incorrect.');
-                }
             });
         }
 
@@ -2928,5 +3207,3 @@ document.head.appendChild(responsiveStyles);
     </script>
 </body>
 </html>
-
-
