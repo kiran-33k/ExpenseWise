@@ -107,6 +107,16 @@
             to { transform: translate3d(0, 100%, 0); }
         }
 
+        @keyframes slideInRight {
+            from { transform: translate3d(100%, 0, 0); opacity: 0; }
+            to { transform: translate3d(0, 0, 0); opacity: 1; }
+        }
+
+        @keyframes slideOutRight {
+            from { transform: translate3d(0, 0, 0); opacity: 1; }
+            to { transform: translate3d(100%, 0, 0); opacity: 0; }
+        }
+
         @keyframes shake {
             0%, 100% { transform: translate3d(0, 0, 0); }
             25% { transform: translate3d(-10px, 0, 0); }
@@ -134,6 +144,14 @@
 
         .slide-down {
             animation: slideDown 0.3s cubic-bezier(0.4, 0, 0.6, 1);
+        }
+
+        .slide-in-right {
+            animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .slide-out-right {
+            animation: slideOutRight 0.3s cubic-bezier(0.4, 0, 0.6, 1);
         }
 
         .pop-in {
@@ -299,6 +317,99 @@
         .icon-btn:active {
             transform: scale(0.9);
             background: var(--hover);
+        }
+
+        /* PIN Change Full Page */
+        .pin-change-page {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            z-index: 250;
+            display: none;
+            overflow-y: auto;
+        }
+
+        .pin-change-page.show {
+            display: block;
+        }
+
+        .pin-change-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--divider);
+            background: var(--surface);
+        }
+
+        .pin-change-back {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--bg);
+            border: 1px solid var(--divider);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text);
+            touch-action: manipulation;
+        }
+
+        .pin-change-back:active {
+            transform: scale(0.9);
+            background: var(--hover);
+        }
+
+        .pin-change-content {
+            min-height: calc(100vh - 80px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 24px;
+        }
+
+        .pin-change-inner {
+            width: 100%;
+            max-width: 360px;
+            text-align: center;
+        }
+
+        .pin-stage-progress {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 32px;
+        }
+
+        .stage-line {
+            height: 3px;
+            width: 40px;
+            background: var(--divider);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .stage-line.active {
+            background: var(--accent);
+            width: 60px;
+        }
+
+        .pin-change-icon {
+            width: 88px;
+            height: 88px;
+            border-radius: 24px;
+            background: linear-gradient(135deg, rgba(91, 125, 255, 0.15), rgba(155, 109, 255, 0.15));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 28px;
+            transition: all 0.3s ease;
+        }
+
+        .pin-change-icon.success {
+            background: linear-gradient(135deg, rgba(0, 186, 136, 0.15), rgba(0, 217, 165, 0.15));
         }
 
         /* Redesigned Search Bar */
@@ -717,113 +828,6 @@
             padding: 24px 20px;
             max-height: 88vh;
             overflow-y: auto;
-        }
-
-        /* PIN Change Modal - PERFECT HALF PAGE WITH THEME SUPPORT */
-        .pin-change-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(12px);
-            display: none;
-            align-items: flex-end;
-            justify-content: center;
-            z-index: 250;
-            padding: 0;
-        }
-
-        .pin-change-overlay.show {
-            display: flex;
-        }
-
-        .pin-change-sheet {
-            background: var(--bg);
-            width: 100%;
-            max-width: 480px;
-            border-radius: 28px 28px 0 0;
-            padding: 0;
-            max-height: 70vh;
-            overflow: hidden;
-            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        .pin-change-handle {
-            width: 40px;
-            height: 5px;
-            background: var(--divider);
-            border-radius: 3px;
-            margin: 12px auto 20px;
-        }
-
-        .pin-change-header {
-            padding: 0 24px 20px;
-            border-bottom: 1px solid var(--divider);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .pin-change-close {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: var(--surface);
-            border: 1px solid var(--divider);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: var(--text);
-            touch-action: manipulation;
-            flex-shrink: 0;
-        }
-
-        .pin-change-close:active {
-            transform: scale(0.9);
-            background: var(--hover);
-        }
-
-        .pin-change-body {
-            padding: 28px 24px 32px;
-            overflow-y: auto;
-            max-height: calc(70vh - 100px);
-        }
-
-        .pin-stage-progress {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 28px;
-        }
-
-        .stage-line {
-            height: 3px;
-            width: 40px;
-            background: var(--divider);
-            border-radius: 2px;
-            transition: all 0.3s ease;
-        }
-
-        .stage-line.active {
-            background: var(--accent);
-            width: 60px;
-        }
-
-        .pin-change-icon {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, rgba(91, 125, 255, 0.15), rgba(155, 109, 255, 0.15));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 24px;
-            transition: all 0.3s ease;
-        }
-
-        .pin-change-icon.success {
-            background: linear-gradient(135deg, rgba(0, 186, 136, 0.15), rgba(0, 217, 165, 0.15));
         }
 
         /* Alert/Popup - FIXED POSITIONING */
@@ -1483,19 +1487,17 @@
         </div>
     </div>
 
-    <!-- Perfect Half-Page PIN Change Modal with Theme & Close Button -->
-    <div class="pin-change-overlay fade-in-overlay" id="pinChangeOverlay" onclick="closeChangePinModal(event)">
-        <div class="pin-change-sheet slide-up" onclick="event.stopPropagation()">
-            <div class="pin-change-handle"></div>
-            
-            <div class="pin-change-header">
-                <h2 style="font-size: 22px; font-weight: 900; color: var(--text);" id="pinChangeTitle">Verify Current PIN</h2>
-                <div class="pin-change-close" onclick="closeChangePinModal()">
-                    <span class="material-symbols-rounded" style="font-size: 20px;">close</span>
-                </div>
+    <!-- Full-Page PIN Change with Theme Support -->
+    <div class="pin-change-page slide-in-right" id="pinChangePage">
+        <div class="pin-change-header">
+            <div class="pin-change-back" onclick="closeChangePinModal()">
+                <span class="material-symbols-rounded" style="font-size: 22px;">arrow_back</span>
             </div>
+            <h2 style="font-size: 20px; font-weight: 800; color: var(--text); flex: 1; text-align: center; margin-right: 40px;" id="pinChangeTitle">Verify Current PIN</h2>
+        </div>
 
-            <div class="pin-change-body">
+        <div class="pin-change-content">
+            <div class="pin-change-inner">
                 <!-- Progress Indicator -->
                 <div class="pin-stage-progress">
                     <div class="stage-line active" id="stageLine1"></div>
@@ -1504,16 +1506,15 @@
 
                 <!-- Icon -->
                 <div class="pin-change-icon" id="pinChangeIcon">
-                    <span class="material-symbols-rounded" style="font-size: 44px; color: var(--accent);" id="pinChangeIconSymbol">lock_open</span>
+                    <span class="material-symbols-rounded" style="font-size: 48px; color: var(--accent);" id="pinChangeIconSymbol">lock_open</span>
                 </div>
 
-                <!-- Description -->
-                <div style="text-align: center; margin-bottom: 32px;">
-                    <p id="pinChangeSubtitle" style="color: var(--text-secondary); font-size: 15px; font-weight: 500; line-height: 1.6;">Enter your current 4-digit security PIN to continue</p>
-                </div>
+                <!-- Title & Description -->
+                <h1 style="font-size: 28px; font-weight: 900; color: var(--text); margin-bottom: 12px; letter-spacing: -0.5px;" id="pinChangeMainTitle">Verify Identity</h1>
+                <p id="pinChangeSubtitle" style="color: var(--text-secondary); font-size: 16px; font-weight: 500; line-height: 1.6; margin-bottom: 48px;">Enter your current 4-digit security PIN to continue</p>
 
                 <!-- PIN Dots -->
-                <div class="pin-dots" style="margin-bottom: 36px;">
+                <div class="pin-dots" style="margin-bottom: 56px;">
                     <div class="pin-dot" id="changeDot1"></div>
                     <div class="pin-dot" id="changeDot2"></div>
                     <div class="pin-dot" id="changeDot3"></div>
@@ -1521,7 +1522,7 @@
                 </div>
 
                 <!-- Numpad -->
-                <div class="numpad" style="max-width: 260px;">
+                <div class="numpad">
                     <button class="numpad-key" onclick="changePinAdd('1')">1</button>
                     <button class="numpad-key" onclick="changePinAdd('2')">2</button>
                     <button class="numpad-key" onclick="changePinAdd('3')">3</button>
@@ -1532,11 +1533,11 @@
                     <button class="numpad-key" onclick="changePinAdd('8')">8</button>
                     <button class="numpad-key" onclick="changePinAdd('9')">9</button>
                     <button class="numpad-key" onclick="changePinDel()">
-                        <span class="material-symbols-rounded" style="font-size: 22px;">backspace</span>
+                        <span class="material-symbols-rounded" style="font-size: 26px;">backspace</span>
                     </button>
                     <button class="numpad-key" onclick="changePinAdd('0')">0</button>
                     <button class="numpad-key primary" onclick="changePinSubmit()">
-                        <span class="material-symbols-rounded" style="font-size: 22px;">check</span>
+                        <span class="material-symbols-rounded" style="font-size: 26px;">check</span>
                     </button>
                 </div>
             </div>
@@ -1699,32 +1700,36 @@
             ]
         };
 
-        // Perfect PIN Change Modal Functions
+        // Full-Page PIN Change Modal Functions
         function openChangePinModal() {
-            const overlay = document.getElementById('pinChangeOverlay');
-            overlay.classList.add('show');
+            const page = document.getElementById('pinChangePage');
+            
+            // Apply current theme to PIN change page
+            if (darkMode) {
+                page.classList.add('dark');
+            } else {
+                page.classList.remove('dark');
+            }
+            
+            page.classList.add('show');
             changePinTemp = '';
             changePinStage = 1;
             updateChangePinDots();
             updateChangePinUI();
         }
 
-        function closeChangePinModal(e) {
-            if (!e || e.target.classList.contains('pin-change-overlay') || e.target.classList.contains('pin-change-close') || e.target.closest('.pin-change-close')) {
-                const overlay = document.getElementById('pinChangeOverlay');
-                const sheet = overlay.querySelector('.pin-change-sheet');
-                
-                sheet.classList.remove('slide-up');
-                sheet.classList.add('slide-down');
-                
-                setTimeout(() => {
-                    overlay.classList.remove('show');
-                    sheet.classList.remove('slide-down');
-                    sheet.classList.add('slide-up');
-                    changePinTemp = '';
-                    changePinStage = 1;
-                }, 300);
-            }
+        function closeChangePinModal() {
+            const page = document.getElementById('pinChangePage');
+            page.classList.remove('slide-in-right');
+            page.classList.add('slide-out-right');
+            
+            setTimeout(() => {
+                page.classList.remove('show');
+                page.classList.remove('slide-out-right');
+                page.classList.add('slide-in-right');
+                changePinTemp = '';
+                changePinStage = 1;
+            }, 300);
         }
 
         function changePinAdd(d) {
@@ -1760,7 +1765,7 @@
                     updateChangePinUI();
                 } else {
                     // Shake animation
-                    document.querySelectorAll('#pinChangeOverlay .pin-dot').forEach(d => {
+                    document.querySelectorAll('#pinChangePage .pin-dot').forEach(d => {
                         d.style.animation = 'shake 0.4s ease';
                         setTimeout(() => d.style.animation = '', 400);
                     });
@@ -1780,6 +1785,7 @@
         function updateChangePinUI() {
             if (changePinStage === 1) {
                 document.getElementById('pinChangeTitle').textContent = 'Verify Current PIN';
+                document.getElementById('pinChangeMainTitle').textContent = 'Verify Identity';
                 document.getElementById('pinChangeSubtitle').textContent = 'Enter your current 4-digit security PIN to continue';
                 document.getElementById('pinChangeIconSymbol').textContent = 'lock_open';
                 document.getElementById('pinChangeIcon').classList.remove('success');
@@ -1787,7 +1793,8 @@
                 document.getElementById('stageLine2').classList.remove('active');
             } else {
                 document.getElementById('pinChangeTitle').textContent = 'Set New PIN';
-                document.getElementById('pinChangeSubtitle').textContent = 'Create your new 4-digit security PIN';
+                document.getElementById('pinChangeMainTitle').textContent = 'Create New PIN';
+                document.getElementById('pinChangeSubtitle').textContent = 'Enter your new 4-digit security PIN';
                 document.getElementById('pinChangeIconSymbol').textContent = 'lock_reset';
                 document.getElementById('pinChangeIcon').classList.add('success');
                 document.getElementById('stageLine1').classList.remove('active');
